@@ -5,7 +5,7 @@ import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
 
-#Data Initialisers hejhej
+#Data Initialisers
 
 data_sving = pd.read_csv("s11_1402.csv", sep = ",")
 
@@ -17,18 +17,18 @@ tid = data_sving['time after start [s]'].tolist()
 #Stang
 m_stang = 0.2244 #kg
 r_stang = 0.005 #m
-I_stang = 1/2 * m_stang * r_stang ** 2 #kg * m^2
+I_stang = 1/2 * m_stang * r_stang * r_stang #kg * m^2
 
 #Trisse
 m_trisse = 0.015 #kg
 r_trisse = 0.01 #m
-I_trisse = m_trisse * r_trisse ** 2 #kg * m^2
+I_trisse = m_trisse * r_trisse * r_trisse #kg * m^2
     
 #Plexi
 N_plexi = 3
 m_plexi = 0.057 #kg
 r_plexi = 0.072 #m
-I_plexi = N_plexi * m_plexi * r_plexi ** 2 #kg * m^2
+I_plexi = N_plexi * m_plexi * r_plexi * r_plexi #kg * m^2
 
 
 #Møtrik
@@ -36,14 +36,14 @@ m_møtrik = 0.01 #kg
 r1_møtrik = 0.005 #m
 r2_møtrik = 0.008425 #m
 N_møtrik = 11
-I_møtrik = 1/2 * m_møtrik * (r1_møtrik ** 2 + r2_møtrik ** 2) * N_møtrik #kg * m^2
+I_møtrik = 1/2 * m_møtrik * (r1_møtrik * r1_møtrik + r2_møtrik * r2_møtrik) * N_møtrik #kg * m^2
 
 #Spændeskive
 m_skive = 0.002 #kg
 r1_skive = 0.005 #m
 r2_skive = 0.009875 #m
 N_skive = 9
-I_skive = 1/2 * m_skive * (r1_skive ** 2 + r2_skive ** 2) * N_skive #kg * m^2
+I_skive = 1/2 * m_skive * (r1_skive * r1_skive + r2_skive * r2_skive) * N_skive #kg * m^2
 
 #Flaske
 m_flaske = 2.078 #kg
@@ -136,29 +136,39 @@ for i in range(len(alpha_list2)):
 
 '''Plots - før flaske'''
 
-#Vinkelacceleration over for tid 
-fig, ax1 = plt.subplots()
-ax1.set_xlabel('Tid [t]')
-ax1.set_ylabel('Vinkelacceleration [alpha]')
-ax1.plot(tid2,alpha_list2, color="blue")
-ax1.tick_params(axis="y")
-ax1.set_title('Vinkelacceleration over tid') 
-
 #Vinkelhastighed over for tid
 fig2, ax2 = plt.subplots()
-ax2.set_xlabel('Tid [t]')
-ax2.set_ylabel('Vinkelhastighed [omega]')
+ax2.set_xlabel('t [s]')
+ax2.set_ylabel('ω [rad/s]')
 ax2.plot(tid2,omega_list2, color="blue")
 ax2.tick_params(axis="y")
-ax2.set_title('Vinkelhastighed over tid') 
+ax2.set_title('Vinkelhastighed over for tid - Svinghjul Før') 
+
+#Vinkelacceleration over for tid 
+fig, ax1 = plt.subplots()
+ax1.set_xlabel('t [s]')
+ax1.set_ylabel('α [rad/s^2]')
+ax1.plot(tid2,alpha_list2, color="red")
+ax1.tick_params(axis="y")
+ax1.set_title('Vinkelacceleration over for tid - Svinghjul Før') 
 
 #Inertimoment over for tid
 fig3, ax3 = plt.subplots()
-ax3.set_xlabel('Tid [t]')
-ax3.set_ylabel('Inertimoment [I]')
-ax3.plot(tid2,svinginerti_list, color="blue")
-ax3.tick_params(axis="y")
-ax3.set_title('Inertimoment over for tid') 
+ax3.set_xlabel('t [s]')
+ax3.set_ylabel('I [kg * m^2]')
+ax3.plot(tid2,svinginerti_list, color="silver")
+plt.ylim(-.5, 1)
+ax3.set_title('Inertimoment over for tid - Svinghjul Før') 
+
+#Beregnet Inertimoment 
+x = np.linspace(5,70,100)
+y = 0*x + 0.5817162071
+plt.plot(x, y, '-r', label='Beregnet inertimoment')
+
+plt.legend(loc='upper left')
+
+
+plt.show()
 
     
 
