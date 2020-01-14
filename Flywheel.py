@@ -23,7 +23,7 @@ I_stang = 1/2 * m_stang * r_stang ** 2 #kg * m^2
 m_trisse = 0.015 #kg
 r_trisse = 0.01 #m
 I_trisse = m_trisse * r_trisse ** 2 #kg * m^2
-    
+
 #Plexi
 N_plexi = 3
 m_plexi = 0.057 #kg
@@ -63,9 +63,9 @@ for i in range(len(tid)):
         omega = (2 * math.pi)/(tid[i])
     else:
         omega = (2 * math.pi)/(tid[i]-tid[i-1])
-        
+
     omega_list.append(omega)
-    
+
 #Vinkelacceleration
 alpha_list = [] #m/s^2
 for i in range(len(omega_list)):
@@ -76,7 +76,7 @@ for i in range(len(omega_list)):
 
     alpha_list.append(alpha)
 
-omega_list2 = []  
+omega_list2 = []
 alpha_list2 = []
 tid2 = []
 i = 0
@@ -85,12 +85,12 @@ while alpha_list[i+1] > 0:
     alpha_list2.append(alpha_list[i])
     tid2.append(tid[i])
     i += 1
-    
+
 #Systemets masse
 m_system = m_sving + m_stang + m_trisse + m_plexi * N_plexi\
 + m_møtrik * N_møtrik + m_skive * N_skive + m_flaske #kg
 
-    
+
 #Normalkraft
 N = m_system * g
 
@@ -101,22 +101,22 @@ b = 0.3997764794714707
 
 for i in range(len(omega_list)):
     mu_list.append(a * omega_list[i] + b)
-    
+
 
 #Friktionskraft
 frikkraft_list = []
 for i in range(len(mu_list)):
     frikkraft_list.append(mu_list[i] * N)
-    
+
 #Friktionsmoment
 taufrik_list = []
 for i in range(len(frikkraft_list)):
     taufrik_list.append(frikkraft_list[i] * r_akse)
-        
 
-    
 
-    
+
+
+
 #Moment af flaske
 tauflaske_list = []
 for i in range(len(frikkraft_list)):
@@ -127,12 +127,12 @@ for i in range(len(frikkraft_list)):
 tausving_list = []
 for i in range(len(tauflaske_list)):
     tausving_list.append(tauflaske_list[i] - taufrik_list[i])
-    
+
 #Inertimoment af svinghjul
 svinginerti_list = []
 for i in range(len(alpha_list2)):
     svinginerti_list.append(tausving_list[i]/alpha_list2[i])
-    
+
 
 '''Plots - før flaske'''
 
@@ -142,15 +142,15 @@ ax2.set_xlabel('t [s]')
 ax2.set_ylabel('ω [rad/s]')
 ax2.plot(tid2,omega_list2, color="blue")
 ax2.tick_params(axis="y")
-ax2.set_title('Vinkelhastighed over for tid - Svinghjul Før') 
+ax2.set_title('Vinkelhastighed over for tid - Svinghjul Før')
 
-#Vinkelacceleration over for tid 
+#Vinkelacceleration over for tid
 fig, ax1 = plt.subplots()
 ax1.set_xlabel('t [s]')
 ax1.set_ylabel('α [rad/s^2]')
 ax1.plot(tid2,alpha_list2, color="red")
 ax1.tick_params(axis="y")
-ax1.set_title('Vinkelacceleration over for tid - Svinghjul Før') 
+ax1.set_title('Vinkelacceleration over for tid - Svinghjul Før')
 
 #Inertimoment over for tid
 fig3, ax3 = plt.subplots()
@@ -158,9 +158,9 @@ ax3.set_xlabel('t [s]')
 ax3.set_ylabel('I [kg * m^2]')
 ax3.plot(tid2,svinginerti_list, color="silver")
 plt.ylim(-.5, 1)
-ax3.set_title('Inertimoment over for tid - Svinghjul Før') 
+ax3.set_title('Inertimoment over for tid - Svinghjul Før')
 
-#Beregnet Inertimoment 
+#Beregnet Inertimoment
 x = np.linspace(5,70,100)
 y = 0*x + 0.5817162071
 plt.plot(x, y, '-r', label='Beregnet inertimoment')
@@ -169,20 +169,3 @@ plt.legend(loc='upper left')
 
 
 plt.show()
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
