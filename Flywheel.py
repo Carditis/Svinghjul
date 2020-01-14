@@ -103,7 +103,7 @@ for i in range(len(omega_list)):
     mu_list.append(a * omega_list[i] + b)
     
 
-#Friktionskraft er sej
+#Friktionskraft
 frikkraft_list = []
 for i in range(len(mu_list)):
     frikkraft_list.append(mu_list[i] * N)
