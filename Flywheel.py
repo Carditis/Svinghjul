@@ -17,18 +17,18 @@ tid = data_sving['time after start [s]'].tolist()
 #Stang
 m_stang = 0.2244 #kg
 r_stang = 0.005 #m
-I_stang = 1/2 * m_stang * r_stang * r_stang #kg * m^2
+I_stang = 1/2 * m_stang * r_stang ** 2 #kg * m^2
 
 #Trisse
 m_trisse = 0.015 #kg
 r_trisse = 0.01 #m
-I_trisse = m_trisse * r_trisse * r_trisse #kg * m^2
+I_trisse = m_trisse * r_trisse ** 2 #kg * m^2
     
 #Plexi
 N_plexi = 3
 m_plexi = 0.057 #kg
 r_plexi = 0.072 #m
-I_plexi = N_plexi * m_plexi * r_plexi * r_plexi #kg * m^2
+I_plexi = N_plexi * m_plexi * r_plexi ** 2 #kg * m^2
 
 
 #Møtrik
@@ -36,14 +36,14 @@ m_møtrik = 0.01 #kg
 r1_møtrik = 0.005 #m
 r2_møtrik = 0.008425 #m
 N_møtrik = 11
-I_møtrik = 1/2 * m_møtrik * (r1_møtrik * r1_møtrik + r2_møtrik * r2_møtrik) * N_møtrik #kg * m^2
+I_møtrik = 1/2 * m_møtrik * (r1_møtrik ** 2 + r2_møtrik ** 2) * N_møtrik #kg * m^2
 
 #Spændeskive
 m_skive = 0.002 #kg
 r1_skive = 0.005 #m
 r2_skive = 0.009875 #m
 N_skive = 9
-I_skive = 1/2 * m_skive * (r1_skive * r1_skive + r2_skive * r2_skive) * N_skive #kg * m^2
+I_skive = 1/2 * m_skive * (r1_skive ** 2 + r2_skive ** 2) * N_skive #kg * m^2
 
 #Flaske
 m_flaske = 2.078 #kg
