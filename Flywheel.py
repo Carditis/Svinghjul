@@ -5,7 +5,7 @@ import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
 
-#Data Initialisers
+#Data Initialisers hejhej
 
 data_sving = pd.read_csv("s11_1402.csv", sep = ",")
 
