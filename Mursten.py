@@ -140,21 +140,21 @@ for i in range(len(frikkraft_list)):
 """ Vinkelhastighed over for tid """
             
 fig3, ax3 = plt.subplots()
-ax3.set_xlabel('Tid [t]')
-ax3.set_ylabel('Vinkelhastighed [ω]')
+ax3.set_xlabel('t [s]')
+ax3.set_ylabel('ω [rad/s]')
 ax3.plot(tid, omega_list, color="blue")
 ax3.tick_params(axis='y')
-ax3.set_title('Vinkelhastighed over for Tid')
+ax3.set_title('Vinkelhastighed over for Tid - Mursten Før')
 
 
 
 #Vinkelacceleration over for tid
 fig2, ax2 = plt.subplots()
-ax2.set_xlabel('Tid [t]')
-ax2.set_ylabel('Vinkelacceleration [α]')
-ax2.plot(tid,alpha_list, color="blue")
+ax2.set_xlabel('t [s]')
+ax2.set_ylabel('α [rad/s^2]')
+ax2.plot(tid,alpha_list, color="red")
 ax2.tick_params(axis="y")
-ax2.set_title('Vinkelacceleration over for Tid')
+ax2.set_title('Vinkelacceleration over for Tid - Mursten Før')
 
 
 '''Systemets moment over for tid'''
@@ -172,18 +172,16 @@ ax5.set_title('Systemets Moment over for Tid')
 fig, ax1 = plt.subplots()
 # Dernæst beskrives "ax1"'s x og y akser
 # Her plottes (V,I) data som punkter
-ax1.plot(omega_list, mu_list, color="blue")
-ax1.set_title('Friktionskoefficient over for vinkelhastighed')
+ax1.plot(omega_list, mu_list, color="green")
+ax1.set_title('Friktionskoefficient over for vinkelhastighed - Mursten Før')
 x = np.linspace(5,40,100)
 y = 0.01206131003562931*x+0.3997764794714707         
-plt.plot(x, y, '-r', label='y=0.012x+0.400\
+plt.plot(x, y, '-r', label='μ =0.012*ω+0.400\
          r^2 = 0.67')
-plt.xlabel('Vinkelhastighed', color='#1C2833')
-plt.ylabel('Friktionskoefficient', color='#1C2833')
-plt.legend(loc='upper left')  
+plt.xlabel('ω [rad/s]', color='#1C2833')
+plt.ylabel('μ', color='#1C2833')
+plt.legend(loc='bottom right')  
 
-# Her farves teksten der beskrvier y-aksen
-ax1.tick_params(axis='y')
 
 plt.show()
 
@@ -196,7 +194,7 @@ b = intercept
 
 
 
-print("y = " + str(slope) + " * x + " + str(intercept))
+print("μ = " + str(slope) + " * ω + " + str(intercept))
 print("r^2 = " + str(r_value**2))
 
 

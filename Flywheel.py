@@ -5,7 +5,7 @@ import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
 
-#Data Initialisers hejhej
+#Data Initialisers
 
 data_sving = pd.read_csv("s11_1402.csv", sep = ",")
 
@@ -136,29 +136,39 @@ for i in range(len(alpha_list2)):
 
 '''Plots - før flaske'''
 
-#Vinkelacceleration over for tid 
-fig, ax1 = plt.subplots()
-ax1.set_xlabel('Tid [t]')
-ax1.set_ylabel('Vinkelacceleration [alpha]')
-ax1.plot(tid2,alpha_list2, color="blue")
-ax1.tick_params(axis="y")
-ax1.set_title('Vinkelacceleration over for tid') 
-
 #Vinkelhastighed over for tid
 fig2, ax2 = plt.subplots()
-ax2.set_xlabel('Tid [t]')
-ax2.set_ylabel('Vinkelhastighed [omega]')
+ax2.set_xlabel('t [s]')
+ax2.set_ylabel('ω [rad/s]')
 ax2.plot(tid2,omega_list2, color="blue")
 ax2.tick_params(axis="y")
-ax2.set_title('Vinkelhastighed over for tid') 
+ax2.set_title('Vinkelhastighed over for tid - Svinghjul Før') 
+
+#Vinkelacceleration over for tid 
+fig, ax1 = plt.subplots()
+ax1.set_xlabel('t [s]')
+ax1.set_ylabel('α [rad/s^2]')
+ax1.plot(tid2,alpha_list2, color="red")
+ax1.tick_params(axis="y")
+ax1.set_title('Vinkelacceleration over for tid - Svinghjul Før') 
 
 #Inertimoment over for tid
 fig3, ax3 = plt.subplots()
-ax3.set_xlabel('Tid [t]')
-ax3.set_ylabel('Inertimoment [I]')
-ax3.plot(tid2,svinginerti_list, color="blue")
-ax3.tick_params(axis="y")
-ax3.set_title('Inertimoment over for tid') 
+ax3.set_xlabel('t [s]')
+ax3.set_ylabel('I [kg * m^2]')
+ax3.plot(tid2,svinginerti_list, color="silver")
+plt.ylim(-.5, 1)
+ax3.set_title('Inertimoment over for tid - Svinghjul Før') 
+
+#Beregnet Inertimoment 
+x = np.linspace(5,70,100)
+y = 0*x + 0.5817162071
+plt.plot(x, y, '-r', label='Beregnet inertimoment')
+
+plt.legend(loc='upper left')
+
+
+plt.show()
 
     
 

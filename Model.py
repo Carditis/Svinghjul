@@ -83,22 +83,21 @@ for i in range(1, 101):
          
          
 '''Plots'''
-      
 #Vinkelhastighed over for tid  
 fig, ax1 = plt.subplots()
-ax1.set_xlabel('Tid [t]')
-ax1.set_ylabel('Vinkelhastighed [omega]')
+ax1.set_xlabel('Tid [s]')
+ax1.set_ylabel('Vinkelhastighed [rad/s]')
 ax1.plot(tid_list,omega_list, color="blue")
 ax1.tick_params(axis="y")
-ax1.set_title('Vinkelhastighed over for tid') 
+ax1.set_title('Vinkelhastighed over for tid - Model Før/Efter') 
 
 
 #Vinkelacceleration over for tid
 fig2, ax2 = plt.subplots()
-ax2.set_xlabel('Tid [t]')
-ax2.set_ylabel('Vinkelacceleration [alpha]')
-ax2.plot(tid_list,alpha_list, color="blue")
+ax2.set_xlabel('Tid [s]')
+ax2.set_ylabel('Vinkelacceleration [rad/s^2]')
+ax2.plot(tid_list,alpha_list, color="red")
 ax2.tick_params(axis="y")
-ax2.set_title('Vinkelacceleration over for tid')
+ax2.set_title('Vinkelacceleration over for tid - Model Før/Efter')
    
 
