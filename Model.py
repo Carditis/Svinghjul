@@ -54,42 +54,59 @@ g = 9.82 #N/kg
 r_trisse = 0.01 #m
 r_akse = 0.005 #m
 
-tau1 = m_flaske * g * r_trisse
-tau2 = 0.105
+tau_flaske = m_flaske * g * r_trisse
 
 
 
-'''Accelerationer'''
-alpha1 = (tau1 - tau2)/I
-alpha2 = -tau2/I
+
+
+
 
 '''Lister'''
 omega_list = []
 omega_list.append(0)
 alpha_list = []
-alpha_list.append(0)
+alpha_list.append((tau_flaske - Mursten.intercept)/I)
 tid_list = []
 tid_list.append(0)
 
 
 
 '''Loops til udfyldning af lister'''
+'''
 for i in range(1, 101):
     tid_list.append(i/10)
     if i < 51:
-        omega_list.append(omega_list[i-1] + alpha1 * (1/10)) 
-        alpha_list.append(alpha1)
+        
+        
+      #  omega_list.append(omega_list[i-1] + alpha1 * (1/10)) 
+      # alpha_list.append(alpha1)
         
         
     else:
-        omega_list.append(omega_list[i-1] + alpha2 * (1/10))
-        alpha_list.append(alpha2)
         
-         
+        
+       # omega_list.append(omega_list[i-1] + alpha2 * (1/10))
+       # alpha_list.append(alpha2)
+'''
+L_snor = 10
+i = 1
+
+while 2 * math.pi * r_trisse * i < L_snor:
+    tid_list.append(i/10)
+    omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
+    alpha_list.append((tau_flaske - (Mursten.slope * omega_list[i] + Mursten.intercept))/I)  
+    i += 1
+
+while omega_list[i-1] > 0:
+    tid_list.append(i/10)
+    omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
+    alpha_list.append((-(Mursten.slope * omega_list[i] + Mursten.intercept))/I)
+    i += 1
          
          
 '''Plots'''
-#Vinkelhastighed over for tid  
+#Vinkelhastighed over for tid
 fig, ax1 = plt.subplots()
 ax1.set_xlabel('Tid [s]')
 ax1.set_ylabel('Vinkelhastighed [rad/s]')

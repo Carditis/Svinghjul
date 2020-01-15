@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
+import Mursten
 
 #Data Initialisers
 
@@ -51,6 +52,7 @@ g = 9.82 #N/kg
 F_flaske = m_flaske * g #N
 r_trisse = 0.01 #m
 r_akse = 0.005 #m
+tau_flaske = F_flaske * r_trisse
 
 #Svinghjul
 m_sving = 4.980 #kg
@@ -94,39 +96,12 @@ m_system = m_sving + m_stang + m_trisse + m_plexi * N_plexi\
 #Normalkraft
 N = m_system * g
 
-#Friktionskoefficient
-mu_list = []
-a = 0.01206131003562931
-b = 0.3997764794714707
-
-for i in range(len(omega_list)):
-    mu_list.append(a * omega_list[i] + b)
-
-
-#Friktionskraft
-frikkraft_list = []
-for i in range(len(mu_list)):
-    frikkraft_list.append(mu_list[i] * N)
-
-#Friktionsmoment
-taufrik_list = []
-for i in range(len(frikkraft_list)):
-    taufrik_list.append(frikkraft_list[i] * r_akse)
-
-
-
-
-
-#Moment af flaske
-tauflaske_list = []
-for i in range(len(frikkraft_list)):
-    tauflaske_list.append(F_flaske * r_trisse)
 
 
 #Moment af Svinghjul
 tausving_list = []
-for i in range(len(tauflaske_list)):
-    tausving_list.append(tauflaske_list[i] - taufrik_list[i])
+for i in range(len(omega_list2)):
+    tausving_list.append(tau_flaske - (Mursten.slope * omega_list2[i] + Mursten.intercept))
 
 #Inertimoment af svinghjul
 svinginerti_list = []
