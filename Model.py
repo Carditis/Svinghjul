@@ -89,7 +89,7 @@ for i in range(1, 101):
        # omega_list.append(omega_list[i-1] + alpha2 * (1/10))
        # alpha_list.append(alpha2)
 '''
-L_snor = 10
+L_snor = 7.2
 i = 1
 
 while 2 * math.pi * r_trisse * i < L_snor:
