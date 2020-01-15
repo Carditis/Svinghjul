@@ -104,9 +104,11 @@ for i in range(len(omega_list2)):
     tausving_list.append(tau_flaske - (Mursten.slope * omega_list2[i] + Mursten.intercept))
 
 #Inertimoment af svinghjul
+I_stativ = I_stang + I_plexi + I_trisse + I_møtrik + I_skive
+
 svinginerti_list = []
 for i in range(len(alpha_list2)):
-    svinginerti_list.append(tausving_list[i]/alpha_list2[i])
+    svinginerti_list.append((tausving_list[i]/alpha_list2[i]) - I_stativ)
 
 
 '''Plots - før flaske'''
@@ -132,7 +134,7 @@ fig3, ax3 = plt.subplots()
 ax3.set_xlabel('t [s]')
 ax3.set_ylabel('I [kg * m^2]')
 ax3.plot(tid2,svinginerti_list, color="silver")
-plt.ylim(-.5, 1)
+plt.ylim(-.5, 1.5)
 ax3.set_title('Inertimoment over for tid - Svinghjul Før')
 
 #Beregnet Inertimoment
