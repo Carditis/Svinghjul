@@ -133,7 +133,13 @@ for i in range(len(taufrik_list)):
 mu_list = [] 
 for i in range(len(frikkraft_list)):
     mu_list.append(frikkraft_list[i]/N)
-    
+
+
+'''Lineær Regression på friktionskoefficient'''
+slope, intercept, r_value, p_value, std_err = stats.linregress(omega_list,taufrik_list)
+
+a = slope
+b = intercept
 
 
 
@@ -168,29 +174,27 @@ ax5.scatter(tid, tausystem_list, color="blue")
 ax5.tick_params(axis='y')
 ax5.set_title('Systemets Moment over for Tid')
 
+
+
 #Friktionskoefficient over for vinkelhastighed
 fig, ax1 = plt.subplots()
 # Dernæst beskrives "ax1"'s x og y akser
 # Her plottes (V,I) data som punkter
-ax1.plot(omega_list, mu_list, color="green")
-ax1.set_title('Friktionskoefficient over for vinkelhastighed - Mursten Før')
+ax1.plot(omega_list, taufrik_list, color="green")
+ax1.set_title('Friktionsmoment over for vinkelhastighed - Mursten Før')
 x = np.linspace(5,40,100)
-y = 0.01206131003562931*x+0.3997764794714707         
-plt.plot(x, y, '-r', label='μ =0.012*ω+0.400\
-         r^2 = 0.67')
+y = slope*x+intercept        
+plt.plot(x, y, '-r', label='τ = ' + str(round(slope,5)) + ' * ω + ' + str(round(intercept,5)) + '\
+         r^2 = ' + str(round(r_value**2,5)))
 plt.xlabel('ω [rad/s]', color='#1C2833')
-plt.ylabel('μ', color='#1C2833')
-plt.legend(loc='bottom right')  
+plt.ylabel('τ_friktion [N*m]', color='#1C2833')
+plt.legend(loc='top left')  
 
 
 plt.show()
 
 
-'''Lineær Regression på friktionskoefficient'''
-slope, intercept, r_value, p_value, std_err = stats.linregress(omega_list,mu_list)
 
-a = slope
-b = intercept
 
 
 

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
+import Mursten
 
 '''Inertimomenter'''
 #Sten
@@ -51,6 +52,7 @@ I = I_sten + I_stang + I_trisse + I_plexi + I_møtrik + I_skive #kg * m^2
 m_flaske = 2.078 #kg
 g = 9.82 #N/kg
 r_trisse = 0.01 #m
+r_akse = 0.005 #m
 
 tau1 = m_flaske * g * r_trisse
 tau2 = 0.105
@@ -65,7 +67,7 @@ alpha2 = -tau2/I
 omega_list = []
 omega_list.append(0)
 alpha_list = []
-alpha_list.append(alpha1)
+alpha_list.append(0)
 tid_list = []
 tid_list.append(0)
 
@@ -77,9 +79,13 @@ for i in range(1, 101):
     if i < 51:
         omega_list.append(omega_list[i-1] + alpha1 * (1/10)) 
         alpha_list.append(alpha1)
+        
+        
     else:
-         omega_list.append(omega_list[i-1] + alpha2 * (1/10))
-         alpha_list.append(alpha2)
+        omega_list.append(omega_list[i-1] + alpha2 * (1/10))
+        alpha_list.append(alpha2)
+        
+         
          
          
 '''Plots'''

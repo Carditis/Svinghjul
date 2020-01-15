@@ -140,7 +140,7 @@ for i in range(len(alpha_list2)):
 fig2, ax2 = plt.subplots()
 ax2.set_xlabel('t [s]')
 ax2.set_ylabel('ω [rad/s]')
-ax2.plot(tid2,omega_list2, color="blue")
+ax2.plot(tid,omega_list, color="blue")
 ax2.tick_params(axis="y")
 ax2.set_title('Vinkelhastighed over for tid - Svinghjul Før')
 
