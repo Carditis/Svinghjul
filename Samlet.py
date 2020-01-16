@@ -40,9 +40,16 @@ taufrikm2 = {}
 
 #Svinghjul
 oh = {}
+oh2 = {}
 ah = {}
+ah2 = {}
 th = {}
+th2 = {}
 rh = {}
+rh2 = {}
+tausys = {}
+svinginerti = {}
+
         
 
 """ Variables """
@@ -126,9 +133,9 @@ def murstensberegner (mArr):
         om2["omegaM" + str(i+1)] = []
         am["alphaM" + str(i+1)] = []
         am2["alphaM" + str(i+1)] = []
-        tm2["tidM" + str(i+1)] = []
         
         tm["tidM" + str(i+1)] = mArr[i]['time after start [s]'].tolist()
+        tm2["tidM" + str(i+1)] = []
         rm["rotnumM" + str(i+1)] = mArr[i]['rotation number'].tolist()
         
     
@@ -182,34 +189,60 @@ def murstensberegner (mArr):
     x = np.linspace(5,60,100)
     y = popt[0]*x+popt[1]        
     plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5))) 
-    print(popt)
-     
-    # print(merge_omega_list)
-    # print(merge_taufrik_list)
+    print('τ_friktion = ' + str(popt[0]) + ' · ω + ' + str(popt[1]))
+
+    murstensberegner.slope = popt[0]
+    murstensberegner.intercept = popt[1]
     
     
         
         
 
 def hjulberegner (hArr):
-
-    
     for i in range(len(hArr)):
         """Vinkelhastighed- og acceleration af svinghjul"""
         oh["omegaS" + str(i+1)] = []
+        oh2["omegaS" + str(i+1)] = []
         ah["alphaS" + str(i+1)] = []
+        ah2["alphaS" + str(i+1)] = []
+        tausys["tausys" + str(i+1)] = []
+        svinginerti["svinginerti" + str(i+1)] = []
         
         th["tidS" + str(i+1)] = hArr[i]['time after start [s]'].tolist()
+        th2["tidS" + str(i+1)] = []
         rh["rotnumS" + str(i+1)] = hArr[i]['rotation number'].tolist()
         
         omegaberegner(th["tidS" + str(i+1)], oh["omegaS"+str(i+1)])
         alphaberegner(th["tidS" + str(i+1)], oh["omegaS"+str(i+1)], ah["alphaS"+str(i+1)])
         
+        """Afskæring af data"""
+        j = len(ah["alphaS" + str(i+1)])-2
+        while ah["alphaS" + str(i+1)][j+1] < 0:
+            j -= 1
+            
+        q = 0
+        while (q+1) < j:
+            
+            oh2["omegaS"+str(i+1)].append(oh["omegaS"+str(i+1)][q])
+            ah2["alphaS" + str(i+1)].append(ah["alphaS" + str(i+1)][q])
+            th2["tidS" + str(i+1)].append(th["tidS1"][q])
+            q += 1
+            
+        """ Systemets moment og svinghjulets inertimoment"""
+        for j in range(len(oh2["omegaS" + str(i+1)])):
+            tausys["tausys" + str(i+1)].append(tau_flaske - (murstensberegner.slope * oh2["omegaS" + str(i+1)][j] + murstensberegner.intercept))
+        for j in range(len(ah2["alphaS" + str(i+1)])):
+            svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j])
+            
+        #Hele turen
         hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 7)
-#        plt.plot(Model.tid_list,Model.omega_list, color="blue")
-        
         accelerationsplot(th["tidS" + str(i+1)],ah["alphaS" + str(i+1)], 8)
     
+        #Kun før
+        hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 9)
+        accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 10)
+        svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 11)
+    print("Inertimoment af svinghjulet bliver " + str(np.mean(svinginerti["svinginerti" + str(i+1)])))
         
 
 def omegaberegner(tid, omega):
@@ -226,6 +259,8 @@ def alphaberegner(tid, omega, alpha):
             alpha.append(omega[i]/tid[i])
         else:
             alpha.append((omega[i]-omega[i-1])/(tid[i]-tid[i-1])) 
+        
+            
             
 def tausystemberegner(I_system, alpha, tausystem):
     for i in range(len(alpha)):
@@ -256,6 +291,13 @@ def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
     plt.xlabel('ω [rad/s]')
     plt.ylabel('τ_frik [N*m]')
     plt.show
+    
+def svinginertiplot (tid, svinginerti, k):
+    plt.figure(k).suptitle("Inertimoment over for tid")
+    plt.plot(tid,svinginerti)
+    plt.xlabel('I [kg · s²]')
+    plt.ylabel('t [s]')
+    plt.show    
             
 def tidappender (tid1, tid2):
     tid2.append(tid1)
