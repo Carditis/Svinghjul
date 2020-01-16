@@ -173,7 +173,8 @@ def murstensberegner (mArr):
         merge_omega_list += om2["omegaM"+str(i+1)]
         merge_taufrik_list += taufrikm2["taufrikM" + str(i+1)]
         
-        
+        popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
+        print(popt[0])
 
         
         
@@ -189,11 +190,15 @@ def murstensberegner (mArr):
         hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 3)
         accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
+        
+    x = np.linspace(5,60,100)
+    y = popt[0]*x+popt[1]        
+    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5))) 
+    plt.legend(loc='top left') 
      
     # print(merge_omega_list)
     # print(merge_taufrik_list)
-    popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
-    print(popt)
+    
     
         
         
