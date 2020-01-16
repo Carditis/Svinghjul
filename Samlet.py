@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from scipy.optimize import curve_fit
+from sklearn.metrics import r2_score
 
 
 
@@ -181,11 +182,12 @@ def murstensberegner (mArr):
     popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
     x = np.linspace(5,60,100)
     y = popt[0]*x+popt[1]        
-    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5))) 
-    print(popt)
-     
-    # print(merge_omega_list)
-    # print(merge_taufrik_list)
+    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5)))
+    y_pred_list = []
+    for i in range(len(merge_omega_list)):
+        y_pred_list.append(popt[0]*merge_omega_list[i]+popt[1])
+    murstensberegner.r2 = r2_score(merge_taufrik_list,y_pred_list) ** (1/2)
+    # print(murstensberegner.r2)
     
     
         
