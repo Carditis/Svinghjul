@@ -8,7 +8,7 @@ from scipy import stats
 
 #Data Initialisers
 
-data_sten = pd.read_csv("m11_1423.csv", sep = ",")
+data_sten = pd.read_csv("1m11_1423.csv", sep = ",")
 
 
 rotnum = data_sten['rotation number'].tolist()
@@ -28,8 +28,8 @@ for i in range(7):
 
 #Intertimoment 
 #Sten
-a = 0.088 #m
-b = 0.224 #m
+a = 0.1077 #m
+b = 0.226 #m
 m_sten = 2.224 #kg
 I_sten = m_sten * 1/12 * (a**2 + b**2) #kg * m^2
 

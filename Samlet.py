@@ -3,34 +3,39 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from scipy import stats
+#import Model
 
 """ Data array """
-mursten1 = pd.read_csv("m11_1412.csv",sep = ",")
-mursten2 = pd.read_csv("m11_1423.csv",sep = ",")
-mursten3 = pd.read_csv("m11_1525.csv",sep = ",")
-mursten4 = pd.read_csv("m11_1530.csv",sep = ",")
-mursten5 = pd.read_csv("m11_1537.csv",sep = ",")
+mursten1 = pd.read_csv("2m11_0950.csv",sep = ",")
+mursten2 = pd.read_csv("2m11_0957.csv",sep = ",")
+mursten3 = pd.read_csv("2m11_1000.csv",sep = ",")
+mursten4 = pd.read_csv("2m11_1004.csv",sep = ",")
 
-#murstenArr = [mursten1, mursten2, mursten3, mursten4, mursten5]
-murstenArr = [mursten2]
 
-sving1 = pd.read_csv("s11_1352.csv",sep = ",")
-sving2 = pd.read_csv("s11_1402.csv",sep = ",")
-sving3 = pd.read_csv("s11_1547.csv",sep = ",")
-sving4 = pd.read_csv("s11_1554.csv",sep = ",")
-sving5 = pd.read_csv("s11_1601.csv",sep = ",")
+murstenArr = [mursten1, mursten2, mursten3, mursten4]
 
-#hjulArr = [sving1, sving2, sving3, sving4, sving5]
-hjulArr = [sving2]
+
+sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
+sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
+sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
+sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
+
+hjulArr = [sving1, sving2, sving3, sving4]
 
 """ Dictionaries """
 #Mursten
 om = {}
+om2 = {}
 am = {}
+am2 = {}
 tm = {}
+tm2 = {}
 rm = {}
+rm2 = {}
 tausysm = {}
+tausysm2 = {}
 taufrikm = {}
+taufrikm2 = {}
 
 #Svinghjul
 oh = {}
@@ -109,16 +114,16 @@ def murstensberegner (mArr):
         
         """Vinkelhastighed- og acceleration af mursten"""
         om["omegaM" + str(i+1)] = []
+        om2["omegaM" + str(i+1)] = []
         am["alphaM" + str(i+1)] = []
+        am2["alphaM" + str(i+1)] = []
+        tm2["tidM" + str(i+1)] = []
         
         tm["tidM" + str(i+1)] = mArr[i]['time after start [s]'].tolist()
         rm["rotnumM" + str(i+1)] = mArr[i]['rotation number'].tolist()
         
         omegaberegner(tm["tidM" + str(i+1)], om["omegaM"+str(i+1)])
         alphaberegner(tm["tidM" + str(i+1)], om["omegaM"+str(i+1)], am["alphaM"+str(i+1)])
-        
-        hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 1)
-        accelerationsplot(tm["tidM" + str(i+1)],am["alphaM" + str(i+1)], 2)
         
         """Moment af systemet"""
         tausysm["tausystemM" + str(i+1)] = []
@@ -127,9 +132,39 @@ def murstensberegner (mArr):
         
         """Friktionsmoment"""
         taufrikm["taufrikM" + str(i+1)] = []
-        taufrikberegner(tausysm["tausystemM" + str(i+1)], tau_flaske, taufrikm["taufrikM" + str(i+1)])
-        friktionsmomentsplot(om["omegaM" + str(i+1)], taufrikm["taufrikM" + str(i+1)], 3)
+        taufrikm2["taufrikM" + str(i+1)] = []
         
+        taufrikberegner(tausysm["tausystemM" + str(i+1)], tau_flaske, taufrikm["taufrikM" + str(i+1)])
+        
+        
+        
+        """Afskæring af data"""
+        
+        j = len(am["alphaM" + str(i+1)])-1
+        while am["alphaM" + str(i+1)][j] < 0:
+            j -= 1
+            
+               
+        q = 0
+        while (q+1) < j:
+            
+            om2["omegaM"+str(i+1)].append(om["omegaM"+str(i+1)][q])
+            am2["alphaM" + str(i+1)].append(am["alphaM" + str(i+1)][q])
+            tm2["tidM" + str(i+1)].append(tm["tidM1"][q])
+            taufrikm2["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
+            q += 1
+        
+        """Plots"""
+        
+        #Hele turen
+        hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 1)
+        accelerationsplot(tm["tidM" + str(i+1)],am["alphaM" + str(i+1)], 2)
+        friktionsmomentsplot(om["omegaM" + str(i+1)], taufrikm["taufrikM" + str(i+1)], 5)
+        
+        #Kun før
+        hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 3)
+        accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
+        friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
 
 
 def hjulberegner (hArr):
@@ -146,8 +181,10 @@ def hjulberegner (hArr):
         omegaberegner(th["tidS" + str(i+1)], oh["omegaS"+str(i+1)])
         alphaberegner(th["tidS" + str(i+1)], oh["omegaS"+str(i+1)], ah["alphaS"+str(i+1)])
         
-        hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 4)
-        accelerationsplot(th["tidS" + str(i+1)],ah["alphaS" + str(i+1)], 5)
+        hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 7)
+#        plt.plot(Model.tid_list,Model.omega_list, color="blue")
+        
+        accelerationsplot(th["tidS" + str(i+1)],ah["alphaS" + str(i+1)], 8)
     
         
 
@@ -196,6 +233,8 @@ def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
     plt.ylabel('τ_frik [N*m]')
     plt.show
             
+def tidappender (tid1, tid2):
+    tid2.append(tid1)
 
 murstensberegner(murstenArr)
 

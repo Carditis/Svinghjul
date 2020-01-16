@@ -8,7 +8,7 @@ import Mursten
 
 #Data Initialisers
 
-data_sving = pd.read_csv("s11_1402.csv", sep = ",")
+data_sving = pd.read_csv("1s11_1402.csv", sep = ",")
 
 rotnum = data_sving['rotation number'].tolist()
 tid = data_sving['time after start [s]'].tolist()

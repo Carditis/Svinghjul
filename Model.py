@@ -67,7 +67,7 @@ tid_list.append(0)
 L_snor = 7.2
 i = 1
 
-while 2 * math.pi * r_trisse * i < L_snor:
+while 2 * math.pi * 0.005 * i < L_snor:
     tid_list.append(i/10)
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
     alpha_list.append((tau_flaske - (Mursten.slope * omega_list[i] + Mursten.intercept))/I)  
