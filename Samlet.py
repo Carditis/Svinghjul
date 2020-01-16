@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from scipy import stats
+from scipy.optimize import curve_fit
 #import Model
 
 """ Data array """
@@ -140,8 +141,8 @@ def murstensberegner (mArr):
         
         """Afskæring af data"""
         
-        j = len(am["alphaM" + str(i+1)])-1
-        while am["alphaM" + str(i+1)][j] < 0:
+        j = len(am["alphaM" + str(i+1)])-2
+        while am["alphaM" + str(i+1)][j+1] < 0:
             j -= 1
             
                
@@ -165,6 +166,8 @@ def murstensberegner (mArr):
         hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 3)
         accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
+        
+        linregression(om2, taufrikm2)
 
 
 def hjulberegner (hArr):
@@ -235,6 +238,30 @@ def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
             
 def tidappender (tid1, tid2):
     tid2.append(tid1)
+
+def func (x,a,b):
+    return a*x+b
+
+def linregression (omega, tau):
+    merge_omega_list = []
+    merge_tau_list = []
+    merge_omega_list.append(omega["omegaM" + str(i+1)])
+    merge_tau_list.append(tau["taufrikM" + str(i+1)])
+    
+#        merge_omega_list += omega['omegaM' + str(i+1)]
+#        merge_tau_list += tau['taufrikM' + str(i+1)]
+#    popt, pcov = curve_fit(func,merge_omega_list,merge_tau_list)
+#    a = popt[0]
+#    b = popt[1]
+#    y = []
+#    for i in merge_omega_list:
+#        y.append(a*merge_omega_list[i]+b)
+#    plt.figure(9).suptitle("Merged friktionsmoment over vinkelhastighed")
+#    plt.plot(merge_omega_list,merge_tau_list)
+#    plt.plot(y,merge_tau_list)
+#    plt.xlabel('ω [rad/s]')
+#    plt.ylabel('τ_frik [N*m]')
+#    plt.show
 
 murstensberegner(murstenArr)
 
