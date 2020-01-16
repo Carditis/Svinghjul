@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from scipy import stats
-from scipy.optimise import curve_fit
+from scipy.optimize import curve_fit
 
 
 
@@ -112,6 +112,9 @@ N_svingsystem = m_svingsystem * g #N
 
 """Functions"""
 
+def func(x,a,b):
+    return a*x+b
+
 def murstensberegner (mArr):
     
     merge_omega_list = []
@@ -167,8 +170,8 @@ def murstensberegner (mArr):
         
         
         
-        merge_omega_list.append(om2["omegaM"+str(i+1)])
-        merge_taufrik_list.append(taufrikm2["taufrikM" + str(i+1)])
+        merge_omega_list += om2["omegaM"+str(i+1)]
+        merge_taufrik_list += taufrikm2["taufrikM" + str(i+1)]
         
         
 
@@ -186,10 +189,12 @@ def murstensberegner (mArr):
         hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 3)
         accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
-        
-        
+     
+    # print(merge_omega_list)
+    # print(merge_taufrik_list)
+    popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
+    print(popt)
     
-         
         
         
 
