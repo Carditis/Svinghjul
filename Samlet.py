@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from scipy.optimize import curve_fit
+from sklearn.metrics import r2_score
 
 
 
@@ -50,7 +51,7 @@ rh2 = {}
 tausys = {}
 svinginerti = {}
 
-        
+
 
 """ Variables """
 #Sten
@@ -68,7 +69,7 @@ I_stang = 1/2 * m_stang * r_stang**2  #kg * m^2
 m_trisse = 0.015 #kg
 r_trisse = 0.01 #m
 I_trisse = m_trisse * r_trisse**2 #kg * m^2
-    
+
 #Plexi
 N_plexi = 3
 m_plexi = 0.057 #kg
@@ -122,81 +123,93 @@ def func(x,a,b):
     return a*x+b
 
 def murstensberegner (mArr):
-    
+
     merge_omega_list = []
     merge_taufrik_list = []
-    
+
     for i in range(len(mArr)):
-        
+
         """Vinkelhastighed- og acceleration af mursten"""
         om["omegaM" + str(i+1)] = []
         om2["omegaM" + str(i+1)] = []
         am["alphaM" + str(i+1)] = []
         am2["alphaM" + str(i+1)] = []
-        
+
         tm["tidM" + str(i+1)] = mArr[i]['time after start [s]'].tolist()
         tm2["tidM" + str(i+1)] = []
         rm["rotnumM" + str(i+1)] = mArr[i]['rotation number'].tolist()
-        
-    
+
+
         omegaberegner(tm["tidM" + str(i+1)], om["omegaM"+str(i+1)])
         alphaberegner(tm["tidM" + str(i+1)], om["omegaM"+str(i+1)], am["alphaM"+str(i+1)])
-        
+
         """Moment af systemet"""
         tausysm["tausystemM" + str(i+1)] = []
-        
+
         tausystemberegner(I_system, am["alphaM" + str(i+1)], tausysm["tausystemM" + str(i+1)])
-        
+
         """Friktionsmoment"""
         taufrikm["taufrikM" + str(i+1)] = []
         taufrikm2["taufrikM" + str(i+1)] = []
-        
+
         taufrikberegner(tausysm["tausystemM" + str(i+1)], tau_flaske, taufrikm["taufrikM" + str(i+1)])
-        
-        
-        
+
+
+
         """Afskæring af data"""
-        
+
         j = len(am["alphaM" + str(i+1)])-2
         while am["alphaM" + str(i+1)][j+1] < 0:
             j -= 1
-            
-               
+
+
         q = 0
         while (q+1) < j:
-            
+
             om2["omegaM"+str(i+1)].append(om["omegaM"+str(i+1)][q])
             am2["alphaM" + str(i+1)].append(am["alphaM" + str(i+1)][q])
             tm2["tidM" + str(i+1)].append(tm["tidM1"][q])
             taufrikm2["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
             q += 1
-        
+
         """Plots"""
         #Hele turen
         hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 1)
         accelerationsplot(tm["tidM" + str(i+1)],am["alphaM" + str(i+1)], 2)
         friktionsmomentsplot(om["omegaM" + str(i+1)], taufrikm["taufrikM" + str(i+1)], 5)
-        
+
         #Kun før
         hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 3)
         accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
-     
+
     """ Lineær regression og Printe tendenslinje """
     merge_omega_list += om2["omegaM"+str(i+1)]
     merge_taufrik_list += taufrikm2["taufrikM" + str(i+1)]
     popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
     x = np.linspace(5,60,100)
-    y = popt[0]*x+popt[1]        
-    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5))) 
+    y = popt[0]*x+popt[1]
+
+    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5)))
+    
+
+
+    #r^2-værdi
+    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5)))
+    y_pred_list = []
+    for i in range(len(merge_omega_list)):
+        y_pred_list.append(popt[0]*merge_omega_list[i]+popt[1])
+    murstensberegner.r2 = r2_score(merge_taufrik_list,y_pred_list) ** (1/2)
+    
     print('τ_friktion = ' + str(popt[0]) + ' · ω + ' + str(popt[1]))
+    print(murstensberegner.r2**2)
 
     murstensberegner.slope = popt[0]
     murstensberegner.intercept = popt[1]
     
-    
-        
-        
+
+
+
 
 def hjulberegner (hArr):
     for i in range(len(hArr)):
@@ -207,43 +220,43 @@ def hjulberegner (hArr):
         ah2["alphaS" + str(i+1)] = []
         tausys["tausys" + str(i+1)] = []
         svinginerti["svinginerti" + str(i+1)] = []
-        
+
         th["tidS" + str(i+1)] = hArr[i]['time after start [s]'].tolist()
         th2["tidS" + str(i+1)] = []
         rh["rotnumS" + str(i+1)] = hArr[i]['rotation number'].tolist()
-        
+
         omegaberegner(th["tidS" + str(i+1)], oh["omegaS"+str(i+1)])
         alphaberegner(th["tidS" + str(i+1)], oh["omegaS"+str(i+1)], ah["alphaS"+str(i+1)])
-        
+
         """Afskæring af data"""
         j = len(ah["alphaS" + str(i+1)])-2
         while ah["alphaS" + str(i+1)][j+1] < 0:
             j -= 1
-            
+
         q = 0
         while (q+1) < j:
-            
+
             oh2["omegaS"+str(i+1)].append(oh["omegaS"+str(i+1)][q])
             ah2["alphaS" + str(i+1)].append(ah["alphaS" + str(i+1)][q])
             th2["tidS" + str(i+1)].append(th["tidS1"][q])
             q += 1
-            
+
         """ Systemets moment og svinghjulets inertimoment"""
         for j in range(len(oh2["omegaS" + str(i+1)])):
             tausys["tausys" + str(i+1)].append(tau_flaske - (murstensberegner.slope * oh2["omegaS" + str(i+1)][j] + murstensberegner.intercept))
         for j in range(len(ah2["alphaS" + str(i+1)])):
             svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j])
-            
+
         #Hele turen
         hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 7)
         accelerationsplot(th["tidS" + str(i+1)],ah["alphaS" + str(i+1)], 8)
-    
+
         #Kun før
         hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 9)
         accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 10)
         svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 11)
     print("Inertimoment af svinghjulet bliver " + str(np.mean(svinginerti["svinginerti" + str(i+1)])))
-        
+
 
 def omegaberegner(tid, omega):
     for i in range(len(tid)):
@@ -251,54 +264,54 @@ def omegaberegner(tid, omega):
             omega.append((2 * math.pi)/tid[i])
         else:
             omega.append((2 * math.pi)/(tid[i]-tid[i-1]))
-            
-            
+
+
 def alphaberegner(tid, omega, alpha):
     for i in range(len(omega)):
         if i == 0 :
             alpha.append(omega[i]/tid[i])
         else:
-            alpha.append((omega[i]-omega[i-1])/(tid[i]-tid[i-1])) 
-        
-            
-            
+            alpha.append((omega[i]-omega[i-1])/(tid[i]-tid[i-1]))
+
+
+
 def tausystemberegner(I_system, alpha, tausystem):
     for i in range(len(alpha)):
         tausystem.append(I_system*alpha[i])
-        
+
 def taufrikberegner(tausystem, tauflaske, taufrik):
    for i in range(len(tausystem)):
        taufrik.append(-tausystem[i]+tau_flaske)
-        
-            
+
+
 def hastighedsplot (tid, omega, k):
     plt.figure(k).suptitle("Vinkelhastighed over for tid")
     plt.plot(tid,omega)
     plt.xlabel('Tid [s]')
     plt.ylabel('ω [rad/s]')
     plt.show
-    
+
 def accelerationsplot (tid, alpha, k):
     plt.figure(k).suptitle("Vinkelacceleration over for tid")
     plt.plot(tid,alpha)
     plt.xlabel('Tid [s]')
     plt.ylabel('α [rad/s²]')
     plt.show
-    
+
 def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
     plt.figure(k).suptitle("Friktionsmoment over for vinkelhastighed")
     plt.plot(vinkelhastighed,friktionsmoment)
     plt.xlabel('ω [rad/s]')
     plt.ylabel('τ_frik [N*m]')
     plt.show
-    
+
 def svinginertiplot (tid, svinginerti, k):
     plt.figure(k).suptitle("Inertimoment over for tid")
     plt.plot(tid,svinginerti)
     plt.xlabel('I [kg · s²]')
     plt.ylabel('t [s]')
-    plt.show    
-            
+    plt.show
+
 def tidappender (tid1, tid2):
     tid2.append(tid1)
 
@@ -307,11 +320,3 @@ def tidappender (tid1, tid2):
 murstensberegner(murstenArr)
 
 hjulberegner(hjulArr)
-
-
-
-
-            
-       
-            
-            
