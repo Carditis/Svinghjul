@@ -176,7 +176,7 @@ ax5.set_title('Systemets Moment over for Tid')
 
 
 
-#Friktionskoefficient over for vinkelhastighed
+#Friktionsmoment over for vinkelhastighed
 fig, ax1 = plt.subplots()
 # Dernæst beskrives "ax1"'s x og y akser
 # Her plottes (V,I) data som punkter

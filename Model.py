@@ -56,12 +56,6 @@ r_akse = 0.005 #m
 
 tau_flaske = m_flaske * g * r_trisse
 
-
-
-
-
-
-
 '''Lister'''
 omega_list = []
 omega_list.append(0)
@@ -70,25 +64,6 @@ alpha_list.append((tau_flaske - Mursten.intercept)/I)
 tid_list = []
 tid_list.append(0)
 
-
-
-'''Loops til udfyldning af lister'''
-'''
-for i in range(1, 101):
-    tid_list.append(i/10)
-    if i < 51:
-        
-        
-      #  omega_list.append(omega_list[i-1] + alpha1 * (1/10)) 
-      # alpha_list.append(alpha1)
-        
-        
-    else:
-        
-        
-       # omega_list.append(omega_list[i-1] + alpha2 * (1/10))
-       # alpha_list.append(alpha2)
-'''
 L_snor = 7.2
 i = 1
 
