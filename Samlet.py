@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from scipy import stats
-from scipy.optimize import curve_fit
-#import Model
+from scipy.optimise import curve_fit
+
+
 
 """ Data array """
 mursten1 = pd.read_csv("2m11_0950.csv",sep = ",")
@@ -43,6 +44,7 @@ oh = {}
 ah = {}
 th = {}
 rh = {}
+        
 
 """ Variables """
 #Sten
@@ -107,9 +109,13 @@ N_stensystem = m_stensystem * g #N
 N_svingsystem = m_svingsystem * g #N
 
 
+
 """Functions"""
 
 def murstensberegner (mArr):
+    
+    merge_omega_list = []
+    merge_taufrik_list = []
     
     for i in range(len(mArr)):
         
@@ -123,6 +129,7 @@ def murstensberegner (mArr):
         tm["tidM" + str(i+1)] = mArr[i]['time after start [s]'].tolist()
         rm["rotnumM" + str(i+1)] = mArr[i]['rotation number'].tolist()
         
+    
         omegaberegner(tm["tidM" + str(i+1)], om["omegaM"+str(i+1)])
         alphaberegner(tm["tidM" + str(i+1)], om["omegaM"+str(i+1)], am["alphaM"+str(i+1)])
         
@@ -154,6 +161,19 @@ def murstensberegner (mArr):
             tm2["tidM" + str(i+1)].append(tm["tidM1"][q])
             taufrikm2["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
             q += 1
+            
+        
+        """ Lineær regression af friktionsmoment v vinkelhastighed"""
+        
+        
+        
+        merge_omega_list.append(om2["omegaM"+str(i+1)])
+        merge_taufrik_list.append(taufrikm2["taufrikM" + str(i+1)])
+        
+        
+
+        
+        
         
         """Plots"""
         
@@ -167,8 +187,11 @@ def murstensberegner (mArr):
         accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
         
-        linregression(om2, taufrikm2)
-
+        
+    
+         
+        
+        
 
 def hjulberegner (hArr):
 
@@ -239,29 +262,7 @@ def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
 def tidappender (tid1, tid2):
     tid2.append(tid1)
 
-def func (x,a,b):
-    return a*x+b
 
-def linregression (omega, tau):
-    merge_omega_list = []
-    merge_tau_list = []
-    merge_omega_list.append(omega["omegaM" + str(i+1)])
-    merge_tau_list.append(tau["taufrikM" + str(i+1)])
-    
-#        merge_omega_list += omega['omegaM' + str(i+1)]
-#        merge_tau_list += tau['taufrikM' + str(i+1)]
-#    popt, pcov = curve_fit(func,merge_omega_list,merge_tau_list)
-#    a = popt[0]
-#    b = popt[1]
-#    y = []
-#    for i in merge_omega_list:
-#        y.append(a*merge_omega_list[i]+b)
-#    plt.figure(9).suptitle("Merged friktionsmoment over vinkelhastighed")
-#    plt.plot(merge_omega_list,merge_tau_list)
-#    plt.plot(y,merge_tau_list)
-#    plt.xlabel('ω [rad/s]')
-#    plt.ylabel('τ_frik [N*m]')
-#    plt.show
 
 murstensberegner(murstenArr)
 

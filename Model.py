@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
-import Mursten
+import Samlet
 
 '''Inertimomenter'''
 #Sten
