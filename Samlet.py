@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-from scipy import stats
 from scipy.optimize import curve_fit
 
 
@@ -164,23 +163,8 @@ def murstensberegner (mArr):
             tm2["tidM" + str(i+1)].append(tm["tidM1"][q])
             taufrikm2["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
             q += 1
-            
-        
-        """ Lineær regression af friktionsmoment v vinkelhastighed"""
-        
-        
-        
-        merge_omega_list += om2["omegaM"+str(i+1)]
-        merge_taufrik_list += taufrikm2["taufrikM" + str(i+1)]
-        
-        popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
-        print(popt[0])
-
-        
-        
         
         """Plots"""
-        
         #Hele turen
         hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 1)
         accelerationsplot(tm["tidM" + str(i+1)],am["alphaM" + str(i+1)], 2)
@@ -190,11 +174,15 @@ def murstensberegner (mArr):
         hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 3)
         accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
-        
+     
+    """ Lineær regression og Printe tendenslinje """
+    merge_omega_list += om2["omegaM"+str(i+1)]
+    merge_taufrik_list += taufrikm2["taufrikM" + str(i+1)]
+    popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
     x = np.linspace(5,60,100)
     y = popt[0]*x+popt[1]        
     plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5))) 
-    plt.legend(loc='top left') 
+    print(popt)
      
     # print(merge_omega_list)
     # print(merge_taufrik_list)
