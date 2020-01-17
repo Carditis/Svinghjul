@@ -57,3 +57,4 @@ ax1.set_title('Energi over tid')
 # ax1.set_title('Kinetisk Energi over Vinkelhastighed')
 print("Det tager" , tid_list[-1], "sekunder før den kinetiske energi i hjulet"\
       " er under" , Energigraense, "Joule når hjulets hastighed ved kanten er", Start_hastighed, "m/s")
+print("Systemet skal tilføres", tabtenergi_list[int(1/t_interval)], "W for at holde på den kinetiske energi")
