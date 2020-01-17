@@ -140,22 +140,24 @@ def MurstensModel():
     modelM_tid = []
     modelM_tid.append(0)
     
-    modelM_rotnum = []
-    modelM_rotnum.append(0)
+    modelM_displacement = []
+    # modelM_displacement.append(0)
     
-    L_snor = 7.2
     
-    i = 0
-    while 2 * math.pi * r_trisse * i < L_snor:
+    i = 1
+    S = 0
+    for j in range(int(tm["tidM1"][tilstandsskifte]/(1/10))):
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
         modelM_alpha.append((tau_flaske - (slope * modelM_omega[i] + intercept))/I_system)
+        deltaS = modelM_omega[i] * (1/10) * r_trisse
+        S += deltaS
         i += 1
     
     while modelM_omega[i-1] > 0:
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
-        modelM_alpha.append((- (slope * modelM_omega[i] + intercept))/I_system)
+        modelM_alpha.append((-(slope * modelM_omega[i] + intercept))/I_system)
         i += 1
         
     hastighedsplot(modelM_tid, modelM_omega, 4)
@@ -166,7 +168,7 @@ def MurstensModel():
 # print(modelM_omega)
 
 def murstensberegner (mArr):
-
+    
     merge_omega_list = []
     merge_taufrik_list = []
 
@@ -204,6 +206,8 @@ def murstensberegner (mArr):
         j = len(am["alphaM" + str(i+1)])-2
         while am["alphaM" + str(i+1)][j+1] < 0:
             j -= 1
+        global tilstandsskifte
+        tilstandsskifte = j
 
 
         q = 0
@@ -363,7 +367,7 @@ def accelerationsplot (tid, alpha, k):
 
 def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
     plt.figure(k).suptitle("Friktionsmoment over for vinkelhastighed")
-    plt.scatter(vinkelhastighed,friktionsmoment)
+    plt.plot(vinkelhastighed,friktionsmoment)
     plt.xlabel('ω [rad/s]')
     plt.ylabel('τ_frik [N*m]')
     plt.show
