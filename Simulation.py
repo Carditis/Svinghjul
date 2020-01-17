@@ -7,35 +7,33 @@ Created on Fri Jan 17 09:28:16 2020
 """
 
 import matplotlib.pyplot as plt
+import Samlet
 
 #Startvariabler
 Start_hastighed = 700 #m/s
-r_sving = 0.4
-Start_omega = 700 * 0.4
+Start_omega = Start_hastighed * Samlet.r_sving
 tid_list = [0]
 omega_list = [Start_omega]
-slope = 0.002874918531194114
-intercept = 0.09479051847376596
-I = 0.6483255722121865
 Energigraense = 1 # Joule
-alpha_list = [(-intercept)/I]
+alpha_list = [(-Samlet.intercept)/Samlet.MaaltInerti]
 tabtenergi_list = [0]
 t_interval = 1/100
+energi_list = []
 
 i = 0
 
-while 1/2 * I * omega_list[-1]**2 > Energigraense:
+while 1/2 * Samlet.MaaltInerti * omega_list[-1]**2 > Energigraense:
     tid_list.append(i*t_interval)
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (t_interval))
-    alpha_list.append((-(slope * omega_list[i] + intercept))/I)
+    alpha_list.append((-(Samlet.slope * omega_list[i] + Samlet.intercept))/Samlet.MaaltInerti)
     i += 1
 
-energi_list = []
+
 
 j = 0
 
 for j in range(len(omega_list)):
-    energi_list.append(1/2 * I * omega_list[j]**2)
+    energi_list.append(1/2 * Samlet.MaaltInerti * omega_list[j]**2)
     
 k = 0
 

@@ -99,6 +99,7 @@ I_skive = 1/2 * m_skive * (r1_skive * r1_skive + r2_skive * r2_skive) * N_skive 
 #Svinghjul
 m_sving = 4.980 #kg
 I_sving = 0.5817162071 #kg * m^2
+r_sving = 0.4 #m
 
 #Flaske
 m_flaske = 2.078 #kg
@@ -304,7 +305,8 @@ def hjulberegner (hArr):
         hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 11)
         accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 12)
         svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 13)
-        hjulberegner.MaaltInerti = (np.mean(svinginerti["svinginerti" + str(i+1)]))
+        global MaaltInerti
+        MaaltInerti = (np.mean(svinginerti["svinginerti" + str(i+1)]))
     print("Inertimoment af svinghjulet bliver " + str(np.mean(svinginerti["svinginerti" + str(i+1)])))
     
     
