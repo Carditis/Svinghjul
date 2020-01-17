@@ -4,26 +4,31 @@ import matplotlib.pyplot as plt
 import math
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
-import Model
+
 
 
 
 """ Data array """
-mursten1 = pd.read_csv("2m11_0950.csv",sep = ",")
-mursten2 = pd.read_csv("2m11_0957.csv",sep = ",")
-mursten3 = pd.read_csv("2m11_1000.csv",sep = ",")
-mursten4 = pd.read_csv("2m11_1004.csv",sep = ",")
+# mursten1 = pd.read_csv("2m11_0950.csv",sep = ",")
+# mursten2 = pd.read_csv("2m11_0957.csv",sep = ",")
+# mursten3 = pd.read_csv("2m11_1000.csv",sep = ",")
+# mursten4 = pd.read_csv("2m11_1004.csv",sep = ",")
+
+mursten1 = pd.read_csv("1m11_1423.csv",sep = ",")
+
+# murstenArr = [mursten1, mursten2, mursten3, mursten4]
+murstenArr = [mursten1]
 
 
-murstenArr = [mursten1, mursten2, mursten3, mursten4]
+# sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
+# sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
+# sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
+# sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
 
+sving1 = pd.read_csv("1s11_1402.csv",sep = ",")
 
-sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
-sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
-sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
-sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
-
-hjulArr = [sving1, sving2, sving3, sving4]
+# hjulArr = [sving1, sving2, sving3, sving4]
+hjulArr = [sving1]
 
 """ Dictionaries """
 #Mursten
@@ -123,6 +128,42 @@ N_svingsystem = m_svingsystem * g #N
 def func(x,a,b):
     return a*x+b
 
+def MurstensModel():
+   
+    modelM_omega = []
+    modelM_omega.append(0)
+    
+    modelM_alpha = []
+    modelM_alpha.append(0)
+    
+    modelM_tid = []
+    modelM_tid.append(0)
+    
+    modelM_rotnum = []
+    modelM_rotnum.append(0)
+    
+    L_snor = 7.2
+    
+    i = 0
+    while 2 * math.pi * r_trisse * i < L_snor:
+        modelM_tid.append(i/10)
+        modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
+        modelM_alpha.append((tau_flaske - (slope * modelM_omega[i] + intercept))/I_system)
+        i += 1
+    
+    while modelM_omega[i-1] > 0:
+        modelM_tid.append(i/10)
+        modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
+        modelM_alpha.append((- (slope * modelM_omega[i] + intercept))/I_system)
+        i += 1
+        
+    hastighedsplot(modelM_tid, modelM_omega, 4)
+    accelerationsplot(modelM_tid, modelM_alpha, 5)
+    
+    
+# print(modelM_tid)
+# print(modelM_omega)
+
 def murstensberegner (mArr):
 
     merge_omega_list = []
@@ -176,15 +217,17 @@ def murstensberegner (mArr):
         """Plots"""
         #Hele turen
         hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 1)
-        hastighedsplot(Model.tid_list, Model.omega_list, 1)
-        
         accelerationsplot(tm["tidM" + str(i+1)],am["alphaM" + str(i+1)], 2)
-        friktionsmomentsplot(om["omegaM" + str(i+1)], taufrikm["taufrikM" + str(i+1)], 5)
+        friktionsmomentsplot(om["omegaM" + str(i+1)], taufrikm["taufrikM" + str(i+1)], 3)
+        
+        #Sammenligning med model
+        hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 4)
+        accelerationsplot(tm["tidM" + str(i+1)],am["alphaM" + str(i+1)], 5)
 
         #Kun før
-        hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 3)
-        accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 4)
-        friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 6)
+        hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 6)
+        accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 7)
+        friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 8)
 
     """ Lineær regression og Printe tendenslinje """
     merge_omega_list += om2["omegaM"+str(i+1)]
@@ -195,8 +238,6 @@ def murstensberegner (mArr):
 
     plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5)))
     
-
-
     #r^2-værdi
     plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5)))
     y_pred_list = []
@@ -208,10 +249,12 @@ def murstensberegner (mArr):
     print('τ_friktion = ' + str(popt[0]) + ' · ω + ' + str(popt[1]))
     print(r2**2)
 
-    global slope 
+    global slope
     slope = popt[0]
-    global intercept 
+    global intercept
     intercept = popt[1]
+    
+       
     
 
 
@@ -254,15 +297,26 @@ def hjulberegner (hArr):
             svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j])
 
         #Hele turen
-        hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 7)
-        accelerationsplot(th["tidS" + str(i+1)],ah["alphaS" + str(i+1)], 8)
+        hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 9)
+        accelerationsplot(th["tidS" + str(i+1)],ah["alphaS" + str(i+1)], 10)
 
         #Kun før
-        hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 9)
-        accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 10)
-        svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 11)
+        hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 11)
+        accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 12)
+        svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 13)
         hjulberegner.MaaltInerti = (np.mean(svinginerti["svinginerti" + str(i+1)]))
     print("Inertimoment af svinghjulet bliver " + str(np.mean(svinginerti["svinginerti" + str(i+1)])))
+    
+    
+
+
+    
+    
+    
+
+        
+        
+        
 
 
 def omegaberegner(tid, omega):
@@ -307,7 +361,7 @@ def accelerationsplot (tid, alpha, k):
 
 def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
     plt.figure(k).suptitle("Friktionsmoment over for vinkelhastighed")
-    plt.plot(vinkelhastighed,friktionsmoment)
+    plt.scatter(vinkelhastighed,friktionsmoment)
     plt.xlabel('ω [rad/s]')
     plt.ylabel('τ_frik [N*m]')
     plt.show
@@ -327,3 +381,5 @@ def tidappender (tid1, tid2):
 murstensberegner(murstenArr)
 
 hjulberegner(hjulArr)
+
+MurstensModel()
