@@ -255,6 +255,7 @@ def hjulberegner (hArr):
         hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 9)
         accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 10)
         svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 11)
+        hjulberegner.MaaltInerti = (np.mean(svinginerti["svinginerti" + str(i+1)]))
     print("Inertimoment af svinghjulet bliver " + str(np.mean(svinginerti["svinginerti" + str(i+1)])))
 
 
