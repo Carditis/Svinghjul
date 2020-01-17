@@ -199,10 +199,17 @@ def murstensberegner (mArr):
     y_pred_list = []
     for i in range(len(merge_omega_list)):
         y_pred_list.append(popt[0]*merge_omega_list[i]+popt[1])
+    global r2
+    r2 = r2_score(merge_taufrik_list,y_pred_list) ** (1/2)
     
     print('τ_friktion = ' + str(popt[0]) + ' · ω + ' + str(popt[1]))
     print(murstensberegner.r2**2)
+    print(r2**2)
 
+    global slope 
+    slope = popt[0]
+    global intercept 
+    intercept = popt[1]
     
 
 
@@ -240,6 +247,7 @@ def hjulberegner (hArr):
 
         """ Systemets moment og svinghjulets inertimoment"""
         for j in range(len(oh2["omegaS" + str(i+1)])):
+            tausys["tausys" + str(i+1)].append(tau_flaske - (slope * oh2["omegaS" + str(i+1)][j] + intercept))
         for j in range(len(ah2["alphaS" + str(i+1)])):
             svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j])
 
