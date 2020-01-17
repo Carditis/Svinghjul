@@ -25,8 +25,6 @@ t_interval = 1/100
 i = 0
 
 while 1/2 * I * omega_list[-1]**2 > Energigraense:
-    tid_list.append(i/10)
-    omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
     tid_list.append(i*t_interval)
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (t_interval))
     alpha_list.append((-(slope * omega_list[i] + intercept))/I)
@@ -59,7 +57,5 @@ ax1.set_title('Energi over tid')
 # ax1.plot(omega_list,energi_list, color="red")
 # ax1.tick_params(axis="y")
 # ax1.set_title('Kinetisk Energi over Vinkelhastighed')
-print("Det tager " , tid_list[-1], " sekunder før den kinetiske energi i hjulet "\
-      " er under " , Energigraense, " Joule når hjulets hastighed ved kanten er", Start_hastighed, " m/s")print("Det tager" , tid_list[-1], "sekunder før den kinetiske energi i hjulet"\
 print("Det tager" , tid_list[-1], "sekunder før den kinetiske energi i hjulet"\
       " er under" , Energigraense, "Joule når hjulets hastighed ved kanten er", Start_hastighed, "m/s")
