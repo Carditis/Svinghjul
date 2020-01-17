@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
+from Mursten import slope, intercept
 
 '''Inertimomenter'''
 #Sten
@@ -59,19 +60,23 @@ tau_flaske = m_flaske * g * r_trisse
 omega_list = []
 omega_list.append(0)
 alpha_list = []
+alpha_list.append((tau_flaske - intercept)/I)
 tid_list = []
 tid_list.append(0)
 
 L_snor = 7.2
 i = 1
 
+while 2 * math.pi * r_trisse * i < L_snor:
     tid_list.append(i/10)
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
+    alpha_list.append((tau_flaske - (slope * omega_list[i] + intercept))/I)  
     i += 1
 
 while omega_list[i-1] > 0:
     tid_list.append(i/10)
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
+    alpha_list.append((-(slope * omega_list[i] + intercept))/I)
     i += 1
          
          

@@ -15,7 +15,6 @@ mursten4 = pd.read_csv("2m11_1004.csv",sep = ",")
 
 mursten5 = pd.read_csv("1m11_1423.csv",sep = ",")
 
-murstenArr = [mursten1, mursten2, mursten3, mursten4]
 
 # murstenArr = [mursten1, mursten2, mursten3, mursten4]
 murstenArr = [mursten5]
@@ -26,7 +25,6 @@ sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
 sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
 sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
 
-hjulArr = [sving1, sving2, sving3, sving4]
 sving5 = pd.read_csv("1s11_1402.csv",sep = ",")
 
 # hjulArr = [sving1, sving2, sving3, sving4]
