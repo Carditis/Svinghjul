@@ -14,11 +14,8 @@ mursten2 = pd.read_csv("2m11_0957.csv",sep = ",")
 mursten3 = pd.read_csv("2m11_1000.csv",sep = ",")
 mursten4 = pd.read_csv("2m11_1004.csv",sep = ",")
 
-mursten5 = pd.read_csv("1m11_1423.csv",sep = ",")
 
-
-# murstenArr = [mursten1, mursten2, mursten3, mursten4]
-murstenArr = [mursten5]
+murstenArr = [mursten1, mursten2, mursten3, mursten4]
 
 
 sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
@@ -26,10 +23,7 @@ sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
 sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
 sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
 
-sving5 = pd.read_csv("1s11_1402.csv",sep = ",")
-
-# hjulArr = [sving1, sving2, sving3, sving4]
-hjulArr = [sving5]
+hjulArr = [sving1, sving2, sving3, sving4]
 
 """ Dictionaries """
 #Mursten
@@ -264,6 +258,7 @@ def hjulberegner (hArr):
         hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 9)
         accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 10)
         svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 11)
+        hjulberegner.MaaltInerti = (np.mean(svinginerti["svinginerti" + str(i+1)]))
     print("Inertimoment af svinghjulet bliver " + str(np.mean(svinginerti["svinginerti" + str(i+1)])))
 
 
