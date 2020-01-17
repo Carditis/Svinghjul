@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
+import Model
 
 
 
@@ -175,6 +176,8 @@ def murstensberegner (mArr):
         """Plots"""
         #Hele turen
         hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 1)
+        hastighedsplot(Model.tid_list, Model.omega_list, 1)
+        
         accelerationsplot(tm["tidM" + str(i+1)],am["alphaM" + str(i+1)], 2)
         friktionsmomentsplot(om["omegaM" + str(i+1)], taufrikm["taufrikM" + str(i+1)], 5)
 
