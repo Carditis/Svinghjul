@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import math
 from scipy import stats
 from sklearn.linear_model import LinearRegression
-import Samlet
 
 '''Inertimomenter'''
 #Sten
@@ -60,23 +59,19 @@ tau_flaske = m_flaske * g * r_trisse
 omega_list = []
 omega_list.append(0)
 alpha_list = []
-alpha_list.append((tau_flaske - Mursten.intercept)/I)
 tid_list = []
 tid_list.append(0)
 
 L_snor = 7.2
 i = 1
 
-while 2 * math.pi * 0.005 * i < L_snor:
     tid_list.append(i/10)
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
-    alpha_list.append((tau_flaske - (Mursten.slope * omega_list[i] + Mursten.intercept))/I)  
     i += 1
 
 while omega_list[i-1] > 0:
     tid_list.append(i/10)
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (1/10))
-    alpha_list.append((-(Mursten.slope * omega_list[i] + Mursten.intercept))/I)
     i += 1
          
          
@@ -90,6 +85,7 @@ ax1.tick_params(axis="y")
 ax1.set_title('Vinkelhastighed over for tid - Model Før/Efter') 
 
 
+
 #Vinkelacceleration over for tid
 fig2, ax2 = plt.subplots()
 ax2.set_xlabel('Tid [s]')
@@ -97,5 +93,6 @@ ax2.set_ylabel('Vinkelacceleration [rad/s^2]')
 ax2.plot(tid_list,alpha_list, color="red")
 ax2.tick_params(axis="y")
 ax2.set_title('Vinkelacceleration over for tid - Model Før/Efter')
+
    
 
