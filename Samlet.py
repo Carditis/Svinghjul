@@ -203,7 +203,6 @@ def murstensberegner (mArr):
     r2 = r2_score(merge_taufrik_list,y_pred_list) ** (1/2)
     
     print('τ_friktion = ' + str(popt[0]) + ' · ω + ' + str(popt[1]))
-    print(murstensberegner.r2**2)
     print(r2**2)
 
     global slope 
