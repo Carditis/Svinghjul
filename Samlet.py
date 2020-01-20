@@ -9,26 +9,26 @@ from sklearn.metrics import r2_score
 
 
 """ Data array """
-# mursten1 = pd.read_csv("2m11_0950.csv",sep = ",")
-# mursten2 = pd.read_csv("2m11_0957.csv",sep = ",")
-# mursten3 = pd.read_csv("2m11_1000.csv",sep = ",")
-# mursten4 = pd.read_csv("2m11_1004.csv",sep = ",")
+mursten1 = pd.read_csv("2m11_0950.csv",sep = ",")
+mursten2 = pd.read_csv("2m11_0957.csv",sep = ",")
+mursten3 = pd.read_csv("2m11_1000.csv",sep = ",")
+mursten4 = pd.read_csv("2m11_1004.csv",sep = ",")
 
 mursten1 = pd.read_csv("1m11_1423.csv",sep = ",")
 
-# murstenArr = [mursten1, mursten2, mursten3, mursten4]
-murstenArr = [mursten1]
+murstenArr = [mursten2, mursten3, mursten4]
+# murstenArr = [mursten1]
 
 
-# sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
-# sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
-# sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
-# sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
+sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
+sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
+sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
+sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
 
-sving1 = pd.read_csv("1s11_1402.csv",sep = ",")
+# sving1 = pd.read_csv("1s11_1402.csv",sep = ",")
 
-# hjulArr = [sving1, sving2, sving3, sving4]
-hjulArr = [sving1]
+hjulArr = [sving1, sving2, sving3, sving4]
+# hjulArr = [sving1]
 
 """ Dictionaries """
 #Mursten
@@ -336,7 +336,7 @@ def omegaberegner(tid, omega):
 def alphaberegner(tid, omega, alpha):
     for i in range(len(omega)):
         if i == 0 :
-            alpha.append(omega[i]/tid[i])
+            alpha.append(omega[i]/(tid[i] * 2))
         else:
             alpha.append((omega[i]-omega[i-1])/(tid[i]-tid[i-1]))
 
@@ -354,20 +354,23 @@ def taufrikberegner(tausystem, tauflaske, taufrik):
 def hastighedsplot (tid, omega, k):
     plt.figure(k).suptitle("Vinkelhastighed over for tid")
     plt.plot(tid,omega)
+    plt.legend(["Omega1","Omega2","Omega3","Model"])
     plt.xlabel('Tid [s]')
     plt.ylabel('ω [rad/s]')
-    plt.show
+    # plt.show
 
 def accelerationsplot (tid, alpha, k):
     plt.figure(k).suptitle("Vinkelacceleration over for tid")
     plt.plot(tid,alpha)
+    plt.legend(["Alpha1","Alpha2","Alpha3","Model"])
     plt.xlabel('Tid [s]')
     plt.ylabel('α [rad/s²]')
-    plt.show
+    # plt.show
 
 def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
     plt.figure(k).suptitle("Friktionsmoment over for vinkelhastighed")
     plt.plot(vinkelhastighed,friktionsmoment)
+    plt.legend(["τ_frik1","τ_frik2","τ_frik3","Regression"])
     plt.xlabel('ω [rad/s]')
     plt.ylabel('τ_frik [N*m]')
     plt.show
@@ -375,9 +378,10 @@ def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
 def svinginertiplot (tid, svinginerti, k):
     plt.figure(k).suptitle("Inertimoment over for tid")
     plt.plot(tid,svinginerti)
-    plt.xlabel('I [kg · s²]')
-    plt.ylabel('t [s]')
-    plt.show
+    plt.legend(["τ_1","τ_2","τ_3","τ_4"])
+    plt.xlabel('t [s] ')
+    plt.ylabel('I [kg · s²]')
+    # plt.show
 
 def tidappender (tid1, tid2):
     tid2.append(tid1)

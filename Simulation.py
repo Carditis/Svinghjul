@@ -11,13 +11,13 @@ import Samlet
 
 #Startvariabler
 Start_hastighed = 700 #m/s
-Start_omega = Start_hastighed * Samlet.r_sving
+Start_omega = Start_hastighed / Samlet.r_sving
 tid_list = [0]
 omega_list = [Start_omega]
 Energigraense = 1 # Joule
 alpha_list = [(-Samlet.intercept)/Samlet.MaaltInerti]
 tabtenergi_list = [0]
-t_interval = 1/100
+t_interval = 1/10
 energi_list = []
 
 i = 0
@@ -27,8 +27,6 @@ while 1/2 * Samlet.MaaltInerti * omega_list[-1]**2 > Energigraense:
     omega_list.append(omega_list[i-1] + alpha_list[i-1] * (t_interval))
     alpha_list.append((-(Samlet.slope * omega_list[i] + Samlet.intercept))/Samlet.MaaltInerti)
     i += 1
-
-
 
 j = 0
 
