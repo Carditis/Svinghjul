@@ -52,10 +52,13 @@ taufrikm3 = {}
 #Svinghjul
 oh = {}
 oh2 = {}
+oh3 = {}
 ah = {}
 ah2 = {}
+ah3 = {}
 th = {}
 th2 = {}
+th3 = {}
 rh = {}
 rh2 = {}
 tausys = {}
@@ -294,13 +297,16 @@ def hjulberegner (hArr):
         """Vinkelhastighed- og acceleration af svinghjul"""
         oh["omegaS" + str(i+1)] = []
         oh2["omegaS" + str(i+1)] = []
+        oh3["omegaS" + str(i+1)] = []
         ah["alphaS" + str(i+1)] = []
         ah2["alphaS" + str(i+1)] = []
+        ah3["alphaS" + str(i+1)] = []
         tausys["tausys" + str(i+1)] = []
         svinginerti["svinginerti" + str(i+1)] = []
 
         th["tidS" + str(i+1)] = hArr[i]['time after start [s]'].tolist()
         th2["tidS" + str(i+1)] = []
+        th3["tidS" + str(i+1)] = []
         rh["rotnumS" + str(i+1)] = hArr[i]['rotation number'].tolist()
 
         omegaberegner(th["tidS" + str(i+1)], oh["omegaS"+str(i+1)])
@@ -318,12 +324,22 @@ def hjulberegner (hArr):
             ah2["alphaS" + str(i+1)].append(ah["alphaS" + str(i+1)][q])
             th2["tidS" + str(i+1)].append(th["tidS1"][q])
             q += 1
+        q += 3
+        while (q < len(oh["omegaS"+str(i+1)])):
+            oh3["omegaS"+str(i+1)].append(oh["omegaS"+str(i+1)][q])
+            ah3["alphaS" + str(i+1)].append(ah["alphaS" + str(i+1)][q])
+            th3["tidS" + str(i+1)].append(th["tidS" + str(i+1)][q])
+            q += 1
 
         """ Systemets moment og svinghjulets inertimoment"""
         for j in range(len(oh2["omegaS" + str(i+1)])):
             tausys["tausys" + str(i+1)].append(tau_flaske - (slope_før * oh2["omegaS" + str(i+1)][j] + intercept_før))
+        # for j in range(len(oh3["omegaS" + str(i+1)])):
+        #     tausys["tausys" + str(i+1)].append(slope_efter * oh3["omegaS" + str(i+1)][j] + intercept_efter)
         for j in range(len(ah2["alphaS" + str(i+1)])):
             svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j])
+        # for j in range(len(ah3["alphaS" + str(i+1)])):
+        #     svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah3["alphaS" + str(i+1)][j])
 
         #Hele turen
         hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 9)
