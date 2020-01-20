@@ -34,16 +34,20 @@ hjulArr = [sving1, sving2, sving3, sving4]
 #Mursten
 om = {}
 om2 = {}
+om3 = {}
 am = {}
 am2 = {}
+am3 = {}
 tm = {}
 tm2 = {}
+tm3 = {}
 rm = {}
 rm2 = {}
 tausysm = {}
 tausysm2 = {}
 taufrikm = {}
 taufrikm2 = {}
+taufrikm3 = {}
 
 #Svinghjul
 oh = {}
@@ -126,8 +130,8 @@ N_svingsystem = m_svingsystem * g #N
 
 """Functions"""
 
-def func(x,a,b):
-    return a*x+b
+def func(x1,a,b):
+    return a*x1+b
 
 def MurstensModel():
    
@@ -149,7 +153,7 @@ def MurstensModel():
     for j in range(int(tm["tidM1"][tilstandsskifte]/(1/10))):
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
-        modelM_alpha.append((tau_flaske - (slope * modelM_omega[i] + intercept))/I_system)
+        modelM_alpha.append((tau_flaske - (slope_før * modelM_omega[i] + intercept_før))/I_system)
         deltaS = modelM_omega[i] * (1/10) * r_trisse
         S += deltaS
         i += 1
@@ -157,7 +161,7 @@ def MurstensModel():
     while modelM_omega[i-1] > 0:
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
-        modelM_alpha.append((-(slope * modelM_omega[i] + intercept))/I_system)
+        modelM_alpha.append((-(slope_før * modelM_omega[i] + intercept_før))/I_system)
         i += 1
         
     hastighedsplot(modelM_tid, modelM_omega, 4)
@@ -169,19 +173,24 @@ def MurstensModel():
 
 def murstensberegner (mArr):
     
-    merge_omega_list = []
-    merge_taufrik_list = []
+    merge_omega_list_før = []
+    merge_taufrik_list_før = []
+    merge_omega_list_efter = []
+    merge_taufrik_list_efter = []
 
     for i in range(len(mArr)):
 
         """Vinkelhastighed- og acceleration af mursten"""
         om["omegaM" + str(i+1)] = []
         om2["omegaM" + str(i+1)] = []
+        om3["omegaM" + str(i+1)] = []
         am["alphaM" + str(i+1)] = []
         am2["alphaM" + str(i+1)] = []
+        am3["alphaM" + str(i+1)] = []
 
         tm["tidM" + str(i+1)] = mArr[i]['time after start [s]'].tolist()
         tm2["tidM" + str(i+1)] = []
+        tm3["tidM" + str(i+1)] = []
         rm["rotnumM" + str(i+1)] = mArr[i]['rotation number'].tolist()
 
 
@@ -196,6 +205,7 @@ def murstensberegner (mArr):
         """Friktionsmoment"""
         taufrikm["taufrikM" + str(i+1)] = []
         taufrikm2["taufrikM" + str(i+1)] = []
+        taufrikm3["taufrikM" + str(i+1)] = []
 
         taufrikberegner(tausysm["tausystemM" + str(i+1)], tau_flaske, taufrikm["taufrikM" + str(i+1)])
 
@@ -218,7 +228,16 @@ def murstensberegner (mArr):
             tm2["tidM" + str(i+1)].append(tm["tidM1"][q])
             taufrikm2["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
             q += 1
-
+        
+        print(q)
+        
+        while (q < len(tm["tidM"+str(i+1)])):
+            om3["omegaM"+str(i+1)].append(om["omegaM"+str(i+1)][q])
+            am3["alphaM" + str(i+1)].append(am["alphaM" + str(i+1)][q])
+            tm3["tidM" + str(i+1)].append(tm["tidM" + str(i+1)][q])
+            taufrikm3["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
+            q += 1
+        
         """Plots"""
         #Hele turen
         hastighedsplot(tm["tidM" + str(i+1)],om["omegaM" + str(i+1)], 1)
@@ -235,29 +254,34 @@ def murstensberegner (mArr):
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 8)
 
     """ Lineær regression og Printe tendenslinje """
-    merge_omega_list += om2["omegaM"+str(i+1)]
-    merge_taufrik_list += taufrikm2["taufrikM" + str(i+1)]
-    popt, pcov = curve_fit(func,merge_omega_list,merge_taufrik_list)
-    x = np.linspace(5,60,100)
-    y = popt[0]*x+popt[1]
-
-    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5)))
+    merge_omega_list_før += om2["omegaM"+str(i+1)]
+    merge_omega_list_efter += om3["omegaM"+str(i+1)]
+    merge_taufrik_list_før += taufrikm2["taufrikM" + str(i+1)]
+    merge_taufrik_list_efter += taufrikm3["taufrikM" + str(i+1)]
+    popt1, pcov1 = curve_fit(func,merge_omega_list_før,merge_taufrik_list_før)
+    popt2, pcov2 = curve_fit(func,merge_omega_list_efter,merge_taufrik_list_efter)
+    x1 = np.linspace(5,60,100)
+    y1 = popt1[0]*x1+popt1[1]
+    plt.plot(x1, y1, '-r', label='τ = ' + str(round(popt1[0],5)) + ' * ω + ' + str(round(popt1[1],5)))
     
     #r^2-værdi
-    plt.plot(x, y, '-r', label='τ = ' + str(round(popt[0],5)) + ' * ω + ' + str(round(popt[1],5)))
     y_pred_list = []
-    for i in range(len(merge_omega_list)):
-        y_pred_list.append(popt[0]*merge_omega_list[i]+popt[1])
+    for i in range(len(merge_omega_list_før)):
+        y_pred_list.append(popt1[0]*merge_omega_list_før[i]+popt1[1])
     global r2
-    r2 = r2_score(merge_taufrik_list,y_pred_list) ** (1/2)
+    r2 = r2_score(merge_taufrik_list_før,y_pred_list) ** (1/2)
     
-    print('τ_friktion = ' + str(popt[0]) + ' · ω + ' + str(popt[1]))
+    print('τ_friktion = ' + str(popt1[0]) + ' · ω + ' + str(popt1[1]))
     print(r2**2)
 
-    global slope
-    slope = popt[0]
-    global intercept
-    intercept = popt[1]
+    global slope_før
+    slope_før = popt1[0]
+    global intercept_før
+    intercept_før = popt1[1]
+    global slope_efter
+    slope_efter = popt2[0]
+    global intercept_efter
+    intercept_efter = popt2[1]
     
        
     
@@ -297,7 +321,7 @@ def hjulberegner (hArr):
 
         """ Systemets moment og svinghjulets inertimoment"""
         for j in range(len(oh2["omegaS" + str(i+1)])):
-            tausys["tausys" + str(i+1)].append(tau_flaske - (slope * oh2["omegaS" + str(i+1)][j] + intercept))
+            tausys["tausys" + str(i+1)].append(tau_flaske - (slope_før * oh2["omegaS" + str(i+1)][j] + intercept_før))
         for j in range(len(ah2["alphaS" + str(i+1)])):
             svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j])
 
@@ -382,9 +406,6 @@ def svinginertiplot (tid, svinginerti, k):
     plt.xlabel('t [s] ')
     plt.ylabel('I [kg · s²]')
     # plt.show
-
-def tidappender (tid1, tid2):
-    tid2.append(tid1)
 
 
 
