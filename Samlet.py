@@ -185,7 +185,7 @@ def SvinghjulsModel():
     modelS_tid = []
     modelS_tid.append(0)
     
-    I_hjulTeori = 0.5 #N*m
+    I_hjulTeori = 0.58 #N*m
 
     
     I_systemS = I_opstilling + I_hjulTeori
@@ -272,7 +272,7 @@ def murstensberegner (mArr):
             taufrikm2["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
             q += 1
         
-        print(q)
+        # print(q)
         
         while (q < len(tm["tidM"+str(i+1)])):
             om3["omegaM"+str(i+1)].append(om["omegaM"+str(i+1)][q])
