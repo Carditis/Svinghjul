@@ -11,7 +11,7 @@ import Samlet
 
 #Startvariabler
 Start_hastighed = 700 #m/s
-Start_omega = Start_hastighed * Samlet.r_sving
+Start_omega = Start_hastighed / Samlet.r_sving
 tid_list = [0]
 omega_list = [Start_omega]
 Energigraense = 1 # Joule
