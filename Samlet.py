@@ -117,7 +117,8 @@ tau_flaske = F_flaske * r_trisse
 
 #Inertimoment
 I_opstilling = I_stang + I_trisse + I_plexi + I_møtrik + I_skive #kg * m^2
-I_system = I_opstilling + I_sten
+I_systemM = I_opstilling + I_sten
+
 
 #Normalkraft
 m_opstilling = m_stang + m_trisse + m_plexi * N_plexi\
@@ -147,16 +148,15 @@ def MurstensModel():
     modelM_tid = []
     modelM_tid.append(0)
     
-    modelM_displacement = []
-    # modelM_displacement.append(0)
+    
     
     
     i = 1
     S = 0
-    for j in range(int(tm["tidM1"][tilstandsskifte]/(1/10))):
+    for j in range(int(tm["tidM1"][tilstandsskifteM]/(1/10))):
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
-        modelM_alpha.append((tau_flaske - (slope_før * modelM_omega[i] + intercept_før))/I_system)
+        modelM_alpha.append((tau_flaske - (slope_før * modelM_omega[i] + intercept_før))/I_systemM)
         deltaS = modelM_omega[i] * (1/10) * r_trisse
         S += deltaS
         i += 1
@@ -164,11 +164,51 @@ def MurstensModel():
     while modelM_omega[i-1] > 0:
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
-        modelM_alpha.append((-(slope_før * modelM_omega[i] + intercept_før))/I_system)
+        modelM_alpha.append((-(slope_før * modelM_omega[i] + intercept_før))/I_systemM)
         i += 1
         
     hastighedsplot(modelM_tid, modelM_omega, 4)
     accelerationsplot(modelM_tid, modelM_alpha, 5)
+    
+    
+# print(modelM_tid)
+# print(modelM_omega)
+    
+def SvinghjulsModel():
+   
+    modelS_omega = []
+    modelS_omega.append(0)
+    
+    modelS_alpha = []
+    modelS_alpha.append(0)
+    
+    modelS_tid = []
+    modelS_tid.append(0)
+    
+    I_hjulTeori = 0.58 #N*m
+
+    
+    I_systemS = I_opstilling + I_hjulTeori
+    # I_systemS = I_opstilling + 0.7
+    
+    i = 1
+    S = 0
+    for j in range(int(th["tidS1"][tilstandsskifteS]/(1/10))):
+        modelS_tid.append(i/10)
+        modelS_omega.append(modelS_omega[i-1] + modelS_alpha[i-1] * (1/10))
+        modelS_alpha.append((tau_flaske - (slope_før * modelS_omega[i] + intercept_før))/I_systemS)
+        deltaS = modelS_omega[i] * (1/10) * r_trisse
+        S += deltaS
+        i += 1
+    
+    while modelS_omega[i-1] > 0:
+        modelS_tid.append(i/10)
+        modelS_omega.append(modelS_omega[i-1] + modelS_alpha[i-1] * (1/10))
+        modelS_alpha.append((-(slope_før * modelS_omega[i] + intercept_før))/I_systemS)
+        i += 1
+        
+    hastighedsplot(modelS_tid, modelS_omega, 9)
+    accelerationsplot(modelS_tid, modelS_alpha, 10)
     
     
 # print(modelM_tid)
@@ -203,7 +243,7 @@ def murstensberegner (mArr):
         """Moment af systemet"""
         tausysm["tausystemM" + str(i+1)] = []
 
-        tausystemberegner(I_system, am["alphaM" + str(i+1)], tausysm["tausystemM" + str(i+1)])
+        tausystemberegner(I_systemM, am["alphaM" + str(i+1)], tausysm["tausystemM" + str(i+1)])
 
         """Friktionsmoment"""
         taufrikm["taufrikM" + str(i+1)] = []
@@ -219,8 +259,8 @@ def murstensberegner (mArr):
         j = len(am["alphaM" + str(i+1)])-2
         while am["alphaM" + str(i+1)][j+1] < 0:
             j -= 1
-        global tilstandsskifte
-        tilstandsskifte = j
+        global tilstandsskifteM
+        tilstandsskifteM = j
 
 
         q = 0
@@ -232,7 +272,7 @@ def murstensberegner (mArr):
             taufrikm2["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
             q += 1
         
-        print(q)
+        # print(q)
         
         while (q < len(tm["tidM"+str(i+1)])):
             om3["omegaM"+str(i+1)].append(om["omegaM"+str(i+1)][q])
@@ -316,6 +356,8 @@ def hjulberegner (hArr):
         j = len(ah["alphaS" + str(i+1)])-2
         while ah["alphaS" + str(i+1)][j+1] < 0:
             j -= 1
+        global tilstandsskifteS
+        tilstandsskifteS = j
 
         q = 0
         while (q+1) < j:
@@ -430,3 +472,4 @@ murstensberegner(murstenArr)
 hjulberegner(hjulArr)
 
 MurstensModel()
+SvinghjulsModel()
