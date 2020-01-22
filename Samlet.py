@@ -20,14 +20,14 @@ murstenArr = [mursten2, mursten3, mursten4]
 # murstenArr = [mursten1]
 
 
-sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
+# sving1 = pd.read_csv("2s11_1023.csv",sep = ",")
 sving2 = pd.read_csv("2s11_1031.csv",sep = ",")
 sving3 = pd.read_csv("2s11_1039.csv",sep = ",")
 sving4 = pd.read_csv("2s11_1046.csv",sep = ",")
 
 # sving1 = pd.read_csv("1s11_1402.csv",sep = ",")
 
-hjulArr = [sving1, sving2, sving3, sving4]
+hjulArr = [sving2, sving3, sving4]
 # hjulArr = [sving1]
 
 """ Dictionaries """
@@ -185,11 +185,10 @@ def SvinghjulsModel():
     modelS_tid = []
     modelS_tid.append(0)
     
-    I_hjulTeori = 0.58 #N*m
+    I_hjulTeori = 0.5817162071 #N*m
 
     
     I_systemS = I_opstilling + I_hjulTeori
-    # I_systemS = I_opstilling + 0.7
     
     i = 1
     S = 0
@@ -280,6 +279,7 @@ def murstensberegner (mArr):
             tm3["tidM" + str(i+1)].append(tm["tidM" + str(i+1)][q])
             taufrikm3["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
             q += 1
+
         
         """Plots"""
         #Hele turen
@@ -305,7 +305,11 @@ def murstensberegner (mArr):
     popt2, pcov2 = curve_fit(func,merge_omega_list_efter,merge_taufrik_list_efter)
     x1 = np.linspace(5,60,100)
     y1 = popt1[0]*x1+popt1[1]
+    # x2 = np.linspace(5,60,100)
+    # y2 = popt2[0]*x2+popt2[1]
     plt.plot(x1, y1, '-r', label='τ = ' + str(round(popt1[0],5)) + ' * ω + ' + str(round(popt1[1],5)))
+    # plt.plot(x2, y2, '-r', label='τ = ' + str(round(popt2[0],5)) + ' * ω + ' + str(round(popt2[1],5)))
+
     
     #r^2-værdi
     y_pred_list = []
@@ -314,8 +318,9 @@ def murstensberegner (mArr):
     global r2
     r2 = r2_score(merge_taufrik_list_før,y_pred_list) ** (1/2)
     
-    print('τ_friktion = ' + str(popt1[0]) + ' · ω + ' + str(popt1[1]))
-    print(r2**2)
+    print('τ_friktion_før = ' + str(popt1[0]) + ' · ω + ' + str(popt1[1]))
+    print('r^2-værdi = ' + str(r2**2))
+
 
     global slope_før
     slope_før = popt1[0]
