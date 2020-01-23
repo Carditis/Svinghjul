@@ -165,7 +165,7 @@ def MurstensModel():
     while modelM_omega[i-1] > 0:
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
-        modelM_alpha.append((-(slope_før * modelM_omega[i] + intercept_før))/I_systemM)
+        modelM_alpha.append((-(slope_efter * modelM_omega[i] + intercept_efter))/I_systemM)
         i += 1
         
     hastighedsplot(modelM_tid, modelM_omega, 4)
@@ -204,11 +204,11 @@ def SvinghjulsModel():
     while modelS_omega[i-1] > 0:
         modelS_tid.append(i/10)
         modelS_omega.append(modelS_omega[i-1] + modelS_alpha[i-1] * (1/10))
-        modelS_alpha.append((-(slope_før * modelS_omega[i] + intercept_før))/I_systemS)
+        modelS_alpha.append((-(slope_efter * modelS_omega[i] + intercept_efter))/I_systemS)
         i += 1
         
-    hastighedsplot(modelS_tid, modelS_omega, 9)
-    accelerationsplot(modelS_tid, modelS_alpha, 10)
+    # hastighedsplot(modelS_tid, modelS_omega, 9)
+    # accelerationsplot(modelS_tid, modelS_alpha, 10)
     
     
 # print(modelM_tid)
@@ -475,7 +475,7 @@ def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
 def svinginertiplot (tid, svinginerti, k):
     plt.figure(k).suptitle("Inertimoment over for tid")
     plt.plot(tid,svinginerti)
-    plt.legend(["τ_1","τ_2","τ_3","τ_4"])
+    plt.legend(["I_1","I_2","I_3","I_4"])
     plt.xlabel('t [s] ')
     plt.ylabel('I [kg · s²]')
     plt.ylim(0,2.5)
