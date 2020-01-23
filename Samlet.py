@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
+import statistics as st
 
 
 
@@ -164,7 +165,7 @@ def MurstensModel():
     while modelM_omega[i-1] > 0:
         modelM_tid.append(i/10)
         modelM_omega.append(modelM_omega[i-1] + modelM_alpha[i-1] * (1/10))
-        modelM_alpha.append((-(slope_før * modelM_omega[i] + intercept_før))/I_systemM)
+        modelM_alpha.append((-(slope_efter * modelM_omega[i] + intercept_efter))/I_systemM)
         i += 1
         
     hastighedsplot(modelM_tid, modelM_omega, 4)
@@ -203,11 +204,11 @@ def SvinghjulsModel():
     while modelS_omega[i-1] > 0:
         modelS_tid.append(i/10)
         modelS_omega.append(modelS_omega[i-1] + modelS_alpha[i-1] * (1/10))
-        modelS_alpha.append((-(slope_før * modelS_omega[i] + intercept_før))/I_systemS)
+        modelS_alpha.append((-(slope_efter * modelS_omega[i] + intercept_efter))/I_systemS)
         i += 1
         
-    hastighedsplot(modelS_tid, modelS_omega, 9)
-    accelerationsplot(modelS_tid, modelS_alpha, 10)
+    # hastighedsplot(modelS_tid, modelS_omega, 9)
+    # accelerationsplot(modelS_tid, modelS_alpha, 10)
     
     
 # print(modelM_tid)
@@ -277,7 +278,7 @@ def murstensberegner (mArr):
             om3["omegaM"+str(i+1)].append(om["omegaM"+str(i+1)][q])
             am3["alphaM" + str(i+1)].append(am["alphaM" + str(i+1)][q])
             tm3["tidM" + str(i+1)].append(tm["tidM" + str(i+1)][q])
-            taufrikm3["taufrikM" + str(i+1)].append(taufrikm["taufrikM" + str(i+1)][q])
+            taufrikm3["taufrikM" + str(i+1)].append(-(tausysm["tausystemM" + str(i+1)][q]))
             q += 1
 
         
@@ -295,6 +296,9 @@ def murstensberegner (mArr):
         hastighedsplot(tm2["tidM" + str(i+1)],om2["omegaM" + str(i+1)], 6)
         accelerationsplot(tm2["tidM" + str(i+1)],am2["alphaM" + str(i+1)], 7)
         friktionsmomentsplot(om2["omegaM" + str(i+1)], taufrikm2["taufrikM" + str(i+1)], 8)
+        
+        #Efter
+        friktionsmomentsplot(om3["omegaM" + str(i+1)], taufrikm3["taufrikM" + str(i+1)], 14)
 
     """ Lineær regression og Printe tendenslinje """
     merge_omega_list_før += om2["omegaM"+str(i+1)]
@@ -302,25 +306,31 @@ def murstensberegner (mArr):
     merge_taufrik_list_før += taufrikm2["taufrikM" + str(i+1)]
     merge_taufrik_list_efter += taufrikm3["taufrikM" + str(i+1)]
     popt1, pcov1 = curve_fit(func,merge_omega_list_før,merge_taufrik_list_før)
-    popt2, pcov2 = curve_fit(func,merge_omega_list_efter,merge_taufrik_list_efter)
-    x1 = np.linspace(5,60,100)
-    y1 = popt1[0]*x1+popt1[1]
-    # x2 = np.linspace(5,60,100)
-    # y2 = popt2[0]*x2+popt2[1]
-    plt.plot(x1, y1, '-r', label='τ = ' + str(round(popt1[0],5)) + ' * ω + ' + str(round(popt1[1],5)))
-    # plt.plot(x2, y2, '-r', label='τ = ' + str(round(popt2[0],5)) + ' * ω + ' + str(round(popt2[1],5)))
+    popt2, pcov2 = curve_fit(func,merge_omega_list_efter[5:-1],merge_taufrik_list_efter[5:-1])
+    # x1 = np.linspace(5,60,100)
+    # y1 = popt1[0]*x1+popt1[1]
+    x2 = np.linspace(5,60,100)
+    y2 = popt2[0]*x2+popt2[1]
+    # plt.plot(x1, y1, '-r', label='τ = ' + str(round(popt1[0],5)) + ' * ω + ' + str(round(popt1[1],5)))
+    plt.plot(x2, y2, '-r', label='τ = ' + str(round(popt2[0],5)) + ' * ω + ' + str(round(popt2[1],5)))
 
     
     #r^2-værdi
-    y_pred_list = []
+    y_pred_list_1 = []
+    y_pred_list_2 = []
     for i in range(len(merge_omega_list_før)):
-        y_pred_list.append(popt1[0]*merge_omega_list_før[i]+popt1[1])
-    global r2
-    r2 = r2_score(merge_taufrik_list_før,y_pred_list) ** (1/2)
+        y_pred_list_1.append(popt1[0]*merge_omega_list_før[i]+popt1[1])
+    for i in range(len(merge_omega_list_efter)):
+        y_pred_list_2.append(popt2[0]*merge_omega_list_efter[i]+popt2[1])
+    global r2_1
+    global r2_2
+    r2_1 = r2_score(merge_taufrik_list_før,y_pred_list_1)
+    r2_2 = r2_score(merge_taufrik_list_efter,y_pred_list_2)
     
     print('τ_friktion_før = ' + str(popt1[0]) + ' · ω + ' + str(popt1[1]))
-    print('r^2-værdi = ' + str(r2**2))
-
+    print('r^2-værdi = ' + str(r2_1**2))
+    print('τ_friktion_efter = ' + str(popt2[0]) + ' · ω + ' + str(popt2[1]))
+    print('r^2-værdi = ' + str(r2_2**2))
 
     global slope_før
     slope_før = popt1[0]
@@ -371,7 +381,7 @@ def hjulberegner (hArr):
             ah2["alphaS" + str(i+1)].append(ah["alphaS" + str(i+1)][q])
             th2["tidS" + str(i+1)].append(th["tidS1"][q])
             q += 1
-        q += 3
+            
         while (q < len(oh["omegaS"+str(i+1)])):
             oh3["omegaS"+str(i+1)].append(oh["omegaS"+str(i+1)][q])
             ah3["alphaS" + str(i+1)].append(ah["alphaS" + str(i+1)][q])
@@ -381,12 +391,12 @@ def hjulberegner (hArr):
         """ Systemets moment og svinghjulets inertimoment"""
         for j in range(len(oh2["omegaS" + str(i+1)])):
             tausys["tausys" + str(i+1)].append(tau_flaske - (slope_før * oh2["omegaS" + str(i+1)][j] + intercept_før))
-        # for j in range(len(oh3["omegaS" + str(i+1)])):
-        #     tausys["tausys" + str(i+1)].append(slope_efter * oh3["omegaS" + str(i+1)][j] + intercept_efter)
+        for j in range(len(oh3["omegaS" + str(i+1)])):
+            tausys["tausys" + str(i+1)].append(slope_efter * oh3["omegaS" + str(i+1)][j] + intercept_efter)
         for j in range(len(ah2["alphaS" + str(i+1)])):
-            svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j])
-        # for j in range(len(ah3["alphaS" + str(i+1)])):
-        #     svinginerti["svinginerti" + str(i+1)].append(tausys["tausys" + str(i+1)][j]/ah3["alphaS" + str(i+1)][j])
+            svinginerti["svinginerti" + str(i+1)].append(abs(tausys["tausys" + str(i+1)][j]/ah2["alphaS" + str(i+1)][j]))
+        for j in range(len(ah3["alphaS" + str(i+1)])):
+            svinginerti["svinginerti" + str(i+1)].append(abs(tausys["tausys" + str(i+1)][j]/ah3["alphaS" + str(i+1)][j]))
 
         #Hele turen
         hastighedsplot(th["tidS" + str(i+1)],oh["omegaS" + str(i+1)], 9)
@@ -395,9 +405,9 @@ def hjulberegner (hArr):
         #Kun før
         hastighedsplot(th2["tidS" + str(i+1)],oh2["omegaS" + str(i+1)], 11)
         accelerationsplot(th2["tidS" + str(i+1)],ah2["alphaS" + str(i+1)], 12)
-        svinginertiplot(th2["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 13)
+        svinginertiplot(th["tidS" + str(i+1)], svinginerti["svinginerti" + str(i+1)], 13)
         global MaaltInerti
-        MaaltInerti = (np.mean(svinginerti["svinginerti" + str(i+1)]))
+        MaaltInerti = (st.median(svinginerti["svinginerti" + str(i+1)]))
     print("Inertimoment af svinghjulet bliver " + str(np.mean(svinginerti["svinginerti" + str(i+1)])))
     
     
@@ -435,7 +445,7 @@ def tausystemberegner(I_system, alpha, tausystem):
 
 def taufrikberegner(tausystem, tauflaske, taufrik):
    for i in range(len(tausystem)):
-       taufrik.append(-tausystem[i]+tau_flaske)
+       taufrik.append(tau_flaske-tausystem[i])
 
 
 def hastighedsplot (tid, omega, k):
@@ -465,9 +475,10 @@ def friktionsmomentsplot (vinkelhastighed, friktionsmoment, k):
 def svinginertiplot (tid, svinginerti, k):
     plt.figure(k).suptitle("Inertimoment over for tid")
     plt.plot(tid,svinginerti)
-    plt.legend(["τ_1","τ_2","τ_3","τ_4"])
+    plt.legend(["I_1","I_2","I_3","I_4"])
     plt.xlabel('t [s] ')
     plt.ylabel('I [kg · s²]')
+    plt.ylim(0,2.5)
     # plt.show
 
 
