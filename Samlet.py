@@ -207,8 +207,8 @@ def SvinghjulsModel():
         modelS_alpha.append((-(slope_efter * modelS_omega[i] + intercept_efter))/I_systemS)
         i += 1
         
-    # hastighedsplot(modelS_tid, modelS_omega, 9)
-    # accelerationsplot(modelS_tid, modelS_alpha, 10)
+    hastighedsplot(modelS_tid, modelS_omega, 9)
+    accelerationsplot(modelS_tid, modelS_alpha, 10)
     
     
 # print(modelM_tid)
